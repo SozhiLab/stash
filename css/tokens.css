@@ -1,0 +1,115 @@
+/* Design tokens. Light is the base; dark redefines tokens only. */
+:root {
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --gutter: 18px;
+  --r-s: 12px;
+  --r-m: 18px;
+  --r-l: 26px;
+  --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+  --t-fast: 140ms;
+  --t: 240ms;
+
+  --bg: #f3f4fa;
+  --dots: rgba(28, 30, 70, 0.1);
+  --glow: rgba(140, 130, 255, 0.2);
+  --surface: #ffffff;
+  --surface-2: #ebedf7;
+  --sheet: #ffffff;
+  --text: #0d0e1a;
+  --text-2: #5a5e78;
+  --text-3: #9195ae;
+  --line: rgba(28, 30, 70, 0.09);
+  --pill: rgba(28, 30, 70, 0.06);
+  --pill-hover: rgba(28, 30, 70, 0.1);
+  --ink: #0d0e1a;
+  --ink-contrast: #ffffff;
+  --check-a: #ffffff;
+  --check-b: #eef0f9;
+  --scrim: rgba(10, 10, 24, 0.4);
+
+  --front-hi: 97%;
+  --front-lo: 84%;
+  --front-a1: 0.66;
+  --front-a2: 0.32;
+  --front-edge: rgba(255, 255, 255, 0.7);
+  --paper: #ffffff;
+
+  --shadow-1: 0 1px 2px rgba(28, 30, 70, 0.05), 0 10px 26px -14px rgba(28, 30, 70, 0.22);
+  --shadow-2: 0 2px 4px rgba(28, 30, 70, 0.06), 0 18px 36px -16px rgba(28, 30, 70, 0.3);
+  --shadow-3: 0 24px 60px -18px rgba(20, 20, 50, 0.45);
+
+  --success: #25a244;
+  --danger: #e5484d;
+  --focus: #6a60ff;
+}
+
+@media (min-width: 720px) {
+  :root {
+    --gutter: 32px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #07070c;
+    --dots: rgba(255, 255, 255, 0.09);
+    --glow: rgba(120, 100, 255, 0.16);
+    --surface: #14151d;
+    --surface-2: #1a1b25;
+    --sheet: #15161f;
+    --text: #f5f5fa;
+    --text-2: #a4a7bd;
+    --text-3: #6d7088;
+    --line: rgba(255, 255, 255, 0.08);
+    --pill: rgba(255, 255, 255, 0.08);
+    --pill-hover: rgba(255, 255, 255, 0.14);
+    --ink: #f4f0e8;
+    --ink-contrast: #0b0b10;
+    --check-a: #1d1e28;
+    --check-b: #242633;
+    --scrim: rgba(0, 0, 0, 0.55);
+    --front-hi: 86%;
+    --front-lo: 62%;
+    --front-a1: 0.3;
+    --front-a2: 0.12;
+    --front-edge: rgba(255, 255, 255, 0.28);
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 26px -14px rgba(0, 0, 0, 0.7);
+    --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.5), 0 18px 36px -16px rgba(0, 0, 0, 0.8);
+    --shadow-3: 0 24px 60px -18px rgba(0, 0, 0, 0.85);
+    --success: #3ddc68;
+    --focus: #9b94ff;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #07070c;
+  --dots: rgba(255, 255, 255, 0.09);
+  --glow: rgba(120, 100, 255, 0.16);
+  --surface: #14151d;
+  --surface-2: #1a1b25;
+  --sheet: #15161f;
+  --text: #f5f5fa;
+  --text-2: #a4a7bd;
+  --text-3: #6d7088;
+  --line: rgba(255, 255, 255, 0.08);
+  --pill: rgba(255, 255, 255, 0.08);
+  --pill-hover: rgba(255, 255, 255, 0.14);
+  --ink: #f4f0e8;
+  --ink-contrast: #0b0b10;
+  --check-a: #1d1e28;
+  --check-b: #242633;
+  --scrim: rgba(0, 0, 0, 0.55);
+  --front-hi: 86%;
+  --front-lo: 62%;
+  --front-a1: 0.3;
+  --front-a2: 0.12;
+  --front-edge: rgba(255, 255, 255, 0.28);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 26px -14px rgba(0, 0, 0, 0.7);
+  --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.5), 0 18px 36px -16px rgba(0, 0, 0, 0.8);
+  --shadow-3: 0 24px 60px -18px rgba(0, 0, 0, 0.85);
+  --success: #3ddc68;
+  --focus: #9b94ff;
+  color-scheme: dark;
+}

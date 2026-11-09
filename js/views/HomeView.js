@@ -1,0 +1,128 @@
+import { h } from '../lib/dom.js';
+import { icon } from '../lib/icons.js';
+import { state, subscribe, getFolder, groupByFolder } from '../store.js';
+import { searchElements } from '../logic/search.js';
+import { plural, EL_FORMS, FOLDER_FORMS } from '../lib/format.js';
+import { SearchBar } from '../ui/SearchBar.js';
+import { FolderCard } from '../ui/FolderCard.js';
+import { ElementGrid } from '../ui/ElementCard.js';
+import { EmptyState } from '../ui/EmptyState.js';
+import { openMenu } from '../ui/BottomSheet.js';
+import { openUpload } from '../ui/UploadModal.js';
+import { openFolderEditor } from '../ui/FolderEditor.js';
+
+function homePill(label, href, active, iconName) {
+  return h(
+    'a',
+    { class: 'pill' + (active ? ' is-active' : ''), href, 'aria-current': active ? 'page' : null },
+    iconName ? icon(iconName, 15) : null,
+    label
+  );
+}
+
+export function HomeView() {
+  let query = '';
+  let first = true;
+
+  const sub = h('p', { class: 'head__sub' });
+  const addBtn = h(
+    'button',
+    {
+      class: 'icon-btn icon-btn--solid icon-btn--lg',
+      type: 'button',
+      'aria-label': 'Добавить',
+      onClick: (e) =>
+        openMenu(
+          [
+            { label: 'Добавить элементы', icon: 'upload', run: () => openUpload() },
+            { label: 'Новая папка', icon: 'folder', run: () => openFolderEditor() },
+          ],
+          { anchor: e.currentTarget, title: 'Добавить' }
+        ),
+    },
+    icon('plus', 22)
+  );
+  const search = SearchBar({
+    placeholder: 'Найти: стрелка, кавычки, story…',
+    onInput: (q) => {
+      query = q;
+      update();
+    },
+  });
+  const pills = h(
+    'nav',
+    { class: 'pills', 'aria-label': 'Разделы' },
+    homePill('Все', '#/', true),
+    homePill('Избранное', '#/favorites', false, 'star'),
+    homePill('Недавние', '#/recent', false, 'clock')
+  );
+  const content = h('div', { class: 'home__content' });
+
+  const newFolderTile = () =>
+    h(
+      'div',
+      { class: 'folder folder--new' },
+      h(
+        'button',
+        { class: 'folder__link', type: 'button', onClick: () => openFolderEditor() },
+        h('div', { class: 'folder__art folder__art--ghost' }, icon('plus', 30)),
+        h('div', { class: 'folder__name' }, 'Новая папка')
+      )
+    );
+
+  function update() {
+    const total = state.elements.length;
+    sub.textContent = `${plural(total, EL_FORMS)} · ${plural(state.folders.length, FOLDER_FORMS)}`;
+
+    if (query) {
+      const found = searchElements(state.elements, getFolder, query);
+      content.replaceChildren(
+        found.length
+          ? h(
+              'div',
+              null,
+              h('p', { class: 'section-label' }, `Найдено: ${found.length}`),
+              ElementGrid(found, { showFolder: true, folderOf: getFolder })
+            )
+          : EmptyState({ emoji: '🔎', title: 'Ничего не найдено', text: 'Попробуйте другое слово или тег.' })
+      );
+      return;
+    }
+
+    const groups = groupByFolder();
+    const grid = h(
+      'div',
+      { class: 'folder-grid' + (first ? ' is-enter' : '') },
+      state.folders.map((f, i) => {
+        const card = FolderCard({ folder: f, items: groups.get(f.id) || [] });
+        card.style.setProperty('--i', Math.min(i, 12));
+        return card;
+      }),
+      newFolderTile()
+    );
+    const hint =
+      total === 0
+        ? h(
+            'div',
+            { class: 'onboard' },
+            h('div', null, h('strong', null, 'Начните с первых элементов'), h('p', null, 'Добавьте PNG, и они появятся в папках. Тап по карточке копирует картинку.')),
+            h('button', { class: 'btn btn--primary', type: 'button', onClick: () => openUpload() }, 'Добавить')
+          )
+        : null;
+    content.replaceChildren(...[hint, grid].filter(Boolean));
+    first = false;
+  }
+
+  update();
+  const off = subscribe(update);
+
+  const node = h(
+    'section',
+    { class: 'view home' },
+    h('header', { class: 'head' }, h('div', null, h('h1', { class: 'display' }, 'Stash'), sub), addBtn),
+    search,
+    pills,
+    content
+  );
+  return { node, destroy: off };
+}

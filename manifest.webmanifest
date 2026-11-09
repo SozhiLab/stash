@@ -1,0 +1,15 @@
+{
+  "name": "Stash — библиотека элементов",
+  "short_name": "Stash",
+  "description": "Личное хранилище графических элементов: найти, тапнуть, вставить.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07070c",
+  "theme_color": "#07070c",
+  "lang": "ru",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
