@@ -58,6 +58,33 @@ img {
 [hidden] {
   display: none !important;
 }
+/* Custom photo background: fixed layer + a scrim in the theme color */
+#bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+#bg-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  opacity: calc(1 - var(--bg-visible, 0.5));
+}
+body.has-bg #bg-layer {
+  opacity: 1;
+}
+body.has-bg {
+  background-image: none;
+}
+body.has-bg::before {
+  background: transparent;
+}
 body.no-scroll {
   overflow: hidden;
 }

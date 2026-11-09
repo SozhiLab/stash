@@ -202,7 +202,7 @@
 .folder__art {
   position: relative;
   width: 100%;
-  max-width: 200px;
+  max-width: 240px;
   aspect-ratio: 1.22;
   margin-bottom: 12px;
 }
@@ -225,12 +225,15 @@
 }
 .folder__paper {
   position: absolute;
-  bottom: 33%;
+  bottom: 30%;
   width: 43%;
   aspect-ratio: 0.92;
   border-radius: 11px;
-  background: var(--paper);
   border: 3px solid var(--paper);
+  /* checkerboard so transparent PNGs read correctly */
+  background-color: var(--check-a);
+  background-image: conic-gradient(var(--check-b) 25%, transparent 0 50%, var(--check-b) 0 75%, transparent 0);
+  background-size: 10px 10px;
   box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   transition: transform 0.38s var(--ease);
@@ -238,8 +241,15 @@
 .folder__paper img {
   width: 100%;
   height: 100%;
+  padding: 9%;
   object-fit: contain;
-  background: #f3f4fa;
+  object-position: 50% 0;
+}
+.folder__paper--solo {
+  left: 50%;
+  width: 50%;
+  margin-left: -25%;
+  transform: rotate(-4deg);
 }
 .folder__paper.is-empty {
   background: linear-gradient(160deg, hsl(var(--h) 80% 97%), hsl(var(--h) 70% 90%));
@@ -258,7 +268,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 66%;
+  height: 56%;
   border-radius: 20px;
   background: linear-gradient(
     150deg,
@@ -300,7 +310,7 @@
 .folder__more {
   position: absolute;
   top: 2px;
-  right: max(0px, calc(50% - 104px));
+  right: max(0px, calc(50% - 120px));
 }
 @media (hover: hover) {
   .folder__more {
@@ -316,6 +326,9 @@
   }
   .folder__link:hover .folder__paper--b {
     transform: translateY(-20%) rotate(10deg);
+  }
+  .folder__link:hover .folder__paper--solo {
+    transform: translateY(-16%) rotate(-7deg);
   }
   .folder__link:hover .folder__front {
     transform: translateY(2%);
@@ -1060,6 +1073,73 @@
 }
 .toast__text {
   min-width: 0;
+}
+
+/* ---------- background sheet ---------- */
+.head__actions {
+  display: flex;
+  gap: 10px;
+  flex: none;
+}
+.bg-preview {
+  aspect-ratio: 16 / 10;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--surface-2);
+  display: grid;
+  place-items: center;
+}
+.bg-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.bg-preview span {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  color: var(--text-3);
+}
+.bg-preview em {
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 500;
+}
+.range {
+  width: 100%;
+  height: 32px;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: pan-y;
+}
+.range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 6px;
+  background: var(--pill-hover);
+}
+.range::-moz-range-track {
+  height: 6px;
+  border-radius: 6px;
+  background: var(--pill-hover);
+}
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -10px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--ink);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.range::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--ink);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 /* ---------- file drop hint ---------- */

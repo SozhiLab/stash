@@ -44,6 +44,11 @@ export async function dbPut(store, value) {
   return dbWrap(db.transaction(store, 'readwrite').objectStore(store).put(value));
 }
 
+export async function dbDelete(store, key) {
+  const db = await dbOpen();
+  return dbWrap(db.transaction(store, 'readwrite').objectStore(store).delete(key));
+}
+
 // Several writes in one atomic transaction. fn receives { storeName: objectStore }.
 export async function dbBatch(storeNames, fn) {
   const db = await dbOpen();

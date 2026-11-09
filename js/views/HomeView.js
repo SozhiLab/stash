@@ -10,6 +10,7 @@ import { EmptyState } from '../ui/EmptyState.js';
 import { openMenu } from '../ui/BottomSheet.js';
 import { openUpload } from '../ui/UploadModal.js';
 import { openFolderEditor } from '../ui/FolderEditor.js';
+import { openBackgroundSheet } from '../ui/BackgroundSheet.js';
 
 function homePill(label, href, active, iconName) {
   return h(
@@ -41,6 +42,16 @@ export function HomeView() {
         ),
     },
     icon('plus', 22)
+  );
+  const bgBtn = h(
+    'button',
+    {
+      class: 'icon-btn icon-btn--lg',
+      type: 'button',
+      'aria-label': 'Фон приложения',
+      onClick: () => openBackgroundSheet(),
+    },
+    icon('image', 22)
   );
   const search = SearchBar({
     placeholder: 'Найти: стрелка, кавычки, story…',
@@ -119,7 +130,12 @@ export function HomeView() {
   const node = h(
     'section',
     { class: 'view home' },
-    h('header', { class: 'head' }, h('div', null, h('h1', { class: 'display' }, 'Stash'), sub), addBtn),
+    h(
+      'header',
+      { class: 'head' },
+      h('div', null, h('h1', { class: 'display' }, 'Штуки'), sub),
+      h('div', { class: 'head__actions' }, bgBtn, addBtn)
+    ),
     search,
     pills,
     content

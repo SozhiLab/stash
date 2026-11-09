@@ -1,6 +1,6 @@
 // Persistence boundary. The rest of the app only talks to this object.
 // To add cloud sync later (Supabase, Cloudflare R2 + D1...), replace this file's internals.
-import { dbGetAll, dbGet, dbPut, dbBatch } from './db.js';
+import { dbGetAll, dbGet, dbPut, dbDelete, dbBatch } from './db.js';
 
 export const repository = {
   async loadAll() {
@@ -13,6 +13,18 @@ export const repository = {
   },
   markSeeded() {
     return dbPut('meta', { key: 'seeded', value: true });
+  },
+
+  // App settings (background photo, its visibility...) live in the meta store
+  async getSetting(name) {
+    const row = await dbGet('meta', `setting:${name}`);
+    return row ? row.value : null;
+  },
+  saveSetting(name, value) {
+    return dbPut('meta', { key: `setting:${name}`, value });
+  },
+  deleteSetting(name) {
+    return dbDelete('meta', `setting:${name}`);
   },
 
   saveFolder(folder) {

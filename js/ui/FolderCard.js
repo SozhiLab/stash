@@ -11,6 +11,15 @@ export function FolderCard({ folder, items }) {
       ? h('span', { class: `folder__paper ${cls}` }, h('img', { src: thumbUrl(el), alt: '', draggable: 'false' }))
       : h('span', { class: `folder__paper ${cls} is-empty` });
 
+  // The two cards peeking out of the folder always show real elements:
+  // 0 items -> two blank placeholders, 1 item -> one centered card, 2+ -> two cards.
+  const papers =
+    items.length === 0
+      ? [paper('folder__paper--a', null), paper('folder__paper--b', null)]
+      : items.length === 1
+        ? [paper('folder__paper--solo', items[0])]
+        : [paper('folder__paper--a', items[0]), paper('folder__paper--b', items[1])];
+
   const moreBtn = h(
     'button',
     {
@@ -32,8 +41,7 @@ export function FolderCard({ folder, items }) {
         'div',
         { class: 'folder__art' },
         h('span', { class: 'folder__back' }),
-        paper('folder__paper--a', items[0]),
-        paper('folder__paper--b', items[1]),
+        ...papers,
         h('span', { class: 'folder__front' }),
         h('span', { class: 'folder__sticker', 'aria-hidden': 'true' }, folder.emoji)
       ),

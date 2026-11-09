@@ -75,6 +75,22 @@ export async function prepareImage(file, kind) {
   return { blob, thumb, width: w, height: h };
 }
 
+// Camera-roll photo -> reasonably small JPEG for use as the app background.
+export async function downscaleToJpeg(file, maxSide = 1600) {
+  const img = await loadImage(file);
+  const { w, h } = naturalSize(img);
+  const s = Math.min(1, maxSide / Math.max(w, h));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(w * s));
+  canvas.height = Math.max(1, Math.round(h * s));
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvasToBlob(canvas, 'image/jpeg', 0.86);
+}
+
 // The clipboard reliably accepts only image/png.
 export async function toPngBlob(blob) {
   if (blob.type === 'image/png') return blob;

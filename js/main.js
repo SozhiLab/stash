@@ -8,6 +8,7 @@ import { closeTopOverlay } from './ui/BottomSheet.js';
 import { openUpload } from './ui/UploadModal.js';
 import { toast } from './ui/Toast.js';
 import { detectKind } from './lib/image.js';
+import { initBackground } from './services/background.js';
 
 const app = document.getElementById('app');
 let current = null;
@@ -113,13 +114,14 @@ async function boot() {
         'div',
         { class: 'boot-error' },
         h('h1', { class: 'display' }, 'Не удалось открыть хранилище'),
-        h('p', null, 'Браузер запретил локальное хранилище (возможно, включён приватный режим). Откройте Stash в обычном окне.')
+        h('p', null, 'Браузер запретил локальное хранилище (возможно, включён приватный режим). Откройте «Штуки» в обычном окне.')
       )
     );
     return;
   }
   window.addEventListener('hashchange', showRoute);
   showRoute();
+  initBackground().catch((e) => console.warn('Background failed', e));
 }
 
 boot();

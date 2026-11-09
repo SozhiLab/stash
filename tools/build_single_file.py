@@ -42,7 +42,7 @@ css = '\n'.join((root / f'css/{n}.css').read_text() for n in ['tokens', 'base', 
 js = "(() => {\n'use strict';\n" + '\n'.join(chunks) + '\n})();'
 js = js.replace("navigator.serviceWorker.register('sw.js')", "navigator.serviceWorker.register('sw.js')")
 
-html = f"""<title>Stash</title>
+html = f"""<title>Штуки</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
