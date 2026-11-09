@@ -86,7 +86,7 @@ export function openPreview(el) {
   const body = h(
     'div',
     { class: 'preview' },
-    h('div', { class: 'preview__stage' }, img),
+    h('div', { class: 'preview__stage', 'data-tone': el.tone || 'light' }, img),
     h('div', { class: 'preview__meta' }, `${el.kind.toUpperCase()} · ${el.width}×${el.height} · ${formatSize(el.size)}`),
     el.tags && el.tags.length
       ? h('div', { class: 'preview__tags' }, el.tags.map((t) => h('span', { class: 'tag' }, `#${t}`)))

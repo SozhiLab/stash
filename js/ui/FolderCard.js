@@ -8,7 +8,7 @@ import { openFolderMenu } from './FolderMenu.js';
 export function FolderCard({ folder, items }) {
   const paper = (cls, el) =>
     el
-      ? h('span', { class: `folder__paper ${cls}` }, h('img', { src: thumbUrl(el), alt: '', draggable: 'false' }))
+      ? h('span', { class: `folder__paper ${cls}`, 'data-tone': el.tone || 'light' }, h('img',{ src: thumbUrl(el), alt: '', draggable: 'false' }))
       : h('span', { class: `folder__paper ${cls} is-empty` });
 
   // The two cards peeking out of the folder always show real elements:

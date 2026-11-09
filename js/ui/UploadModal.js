@@ -4,7 +4,7 @@ import { icon } from '../lib/icons.js';
 import { openSheet } from './BottomSheet.js';
 import { toast } from './Toast.js';
 import { state, getFolder, addElements, createFolder } from '../store.js';
-import { detectKind } from '../lib/image.js';
+import { detectKind, toneOfBlob } from '../lib/image.js';
 import { uid } from '../lib/id.js';
 import { prettyName, parseTags } from '../lib/format.js';
 
@@ -51,11 +51,12 @@ export function openUpload({ files = [], folderId = null } = {}) {
 
   function paint() {
     list.replaceChildren(
-      ...items.map((it) =>
-        h(
+      ...items.map((it) => {
+        it.thumbEl = h('div', { class: 'up-row__thumb', 'data-tone': it.tone || 'light' }, h('img', { src: it.url, alt: '' }));
+        return h(
           'div',
           { class: 'up-row' },
-          h('div', { class: 'up-row__thumb' }, h('img', { src: it.url, alt: '' })),
+          it.thumbEl,
           h('input', {
             class: 'input up-row__name',
             value: it.name,
@@ -76,8 +77,8 @@ export function openUpload({ files = [], folderId = null } = {}) {
             },
             icon('close', 16)
           )
-        )
-      )
+        );
+      })
     );
     saveBtn.disabled = !items.length;
     saveBtn.textContent = items.length ? `Добавить: ${items.length}` : 'Добавить';
@@ -91,7 +92,15 @@ export function openUpload({ files = [], folderId = null } = {}) {
         skipped++;
         continue;
       }
-      items.push({ id: uid(), file, name: prettyName(file.name), url: URL.createObjectURL(file) });
+      const item = { id: uid(), file, name: prettyName(file.name), url: URL.createObjectURL(file), tone: 'light', thumbEl: null };
+      items.push(item);
+      // pick the backdrop in the background; update the thumb in place so typing is not interrupted
+      toneOfBlob(file)
+        .then((tone) => {
+          item.tone = tone;
+          if (item.thumbEl) item.thumbEl.dataset.tone = tone;
+        })
+        .catch(() => {});
     }
     if (skipped) toast(`Пропущено файлов: ${skipped} (неподдерживаемый формат)`, { tone: 'error', icon: 'close' });
     paint();

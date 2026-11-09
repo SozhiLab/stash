@@ -2,7 +2,7 @@
 import { repository } from './data/repository.js';
 import { DEFAULT_FOLDERS } from './data/defaults.js';
 import { uid } from './lib/id.js';
-import { detectKind, mimeOf, prepareImage } from './lib/image.js';
+import { detectKind, mimeOf, prepareImage, toneOfBlob } from './lib/image.js';
 
 export const state = { ready: false, folders: [], elements: [] };
 
@@ -74,6 +74,22 @@ export async function init() {
   state.elements = elements;
   state.ready = true;
   notify();
+  backfillTones();
+}
+
+// Elements added before backdrop tones existed get one computed from their thumbnail
+async function backfillTones() {
+  const todo = state.elements.filter((e) => !e.tone);
+  if (!todo.length) return;
+  for (const el of todo) {
+    try {
+      el.tone = await toneOfBlob(el.thumb);
+    } catch (e) {
+      el.tone = 'light';
+    }
+    repository.saveElement(el).catch(() => {});
+  }
+  notify();
 }
 
 // ---------- folders ----------
@@ -122,7 +138,7 @@ export async function addElements(items, onProgress) {
     try {
       const kind = detectKind(item.file);
       if (!kind) throw new Error('unsupported type');
-      const { blob, thumb, width, height } = await prepareImage(item.file, kind);
+      const { blob, thumb, width, height, tone } = await prepareImage(item.file, kind);
       const el = {
         id: uid(),
         folderId: item.folderId,
@@ -133,6 +149,7 @@ export async function addElements(items, onProgress) {
         size: blob.size,
         width,
         height,
+        tone,
         thumb,
         favorite: false,
         lastUsedAt: null,

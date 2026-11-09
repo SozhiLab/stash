@@ -205,23 +205,24 @@
   max-width: 240px;
   aspect-ratio: 1.22;
   margin-bottom: 12px;
+  isolation: isolate;
 }
 .folder__back {
   position: absolute;
-  inset: 14% 3% 0 3%;
-  border-radius: 18px;
-  background: linear-gradient(165deg, hsl(var(--h) 72% 80%), hsl(var(--h) 62% 62%));
+  inset: 14% 0 0 0;
+  border-radius: 0 20px 20px 20px; /* top-left is square so the tab flows into the edge */
+  background: linear-gradient(180deg, hsl(var(--h) 72% 80%), hsl(var(--h) 62% 62%));
   box-shadow: 0 20px 42px -16px hsl(var(--h) 80% 55% / 0.6);
 }
 .folder__back::before {
   content: '';
   position: absolute;
   left: 0;
-  top: -9%;
+  top: -8%;
   width: 42%;
-  height: 18%;
-  border-radius: 12px 12px 0 0;
-  background: hsl(var(--h) 70% 76%);
+  height: calc(8% + 2px);
+  border-radius: 13px 13px 0 0;
+  background: hsl(var(--h) 72% 80%);
 }
 .folder__paper {
   position: absolute;
@@ -230,10 +231,7 @@
   aspect-ratio: 0.92;
   border-radius: 11px;
   border: 3px solid var(--paper);
-  /* checkerboard so transparent PNGs read correctly */
-  background-color: var(--check-a);
-  background-image: conic-gradient(var(--check-b) 25%, transparent 0 50%, var(--check-b) 0 75%, transparent 0);
-  background-size: 10px 10px;
+  background: var(--tone, var(--tone-light));
   box-shadow: 0 8px 16px -6px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   transition: transform 0.38s var(--ease);
@@ -330,9 +328,6 @@
   .folder__link:hover .folder__paper--solo {
     transform: translateY(-16%) rotate(-7deg);
   }
-  .folder__link:hover .folder__front {
-    transform: translateY(2%);
-  }
   .folder__link:hover .folder__sticker {
     transform: rotate(4deg) scale(1.06);
   }
@@ -391,6 +386,18 @@
   max-width: 44ch;
 }
 
+/* Solid neutral backdrop under an element. The tone is chosen from the element's own colors
+   (dark artwork -> light gray, light artwork -> charcoal, mixed -> mid gray). */
+[data-tone='light'] {
+  --tone: var(--tone-light);
+}
+[data-tone='dark'] {
+  --tone: var(--tone-dark);
+}
+[data-tone='mid'] {
+  --tone: var(--tone-mid);
+}
+
 /* ---------- element card ---------- */
 .el {
   position: relative;
@@ -420,9 +427,7 @@
   padding: 12%;
   border-radius: 13px;
   overflow: hidden;
-  background-color: var(--check-a);
-  background-image: conic-gradient(var(--check-b) 25%, transparent 0 50%, var(--check-b) 0 75%, transparent 0);
-  background-size: 16px 16px;
+  background: var(--tone, var(--tone-light));
 }
 .el__preview img {
   width: 100%;
@@ -931,9 +936,7 @@
   height: 52px;
   padding: 6px;
   border-radius: 11px;
-  background-color: var(--check-a);
-  background-image: conic-gradient(var(--check-b) 25%, transparent 0 50%, var(--check-b) 0 75%, transparent 0);
-  background-size: 12px 12px;
+  background: var(--tone, var(--tone-light));
 }
 .up-row__thumb img {
   width: 100%;
@@ -997,9 +1000,7 @@
   place-items: center;
   padding: 7%;
   border-radius: 20px;
-  background-color: var(--check-a);
-  background-image: conic-gradient(var(--check-b) 25%, transparent 0 50%, var(--check-b) 0 75%, transparent 0);
-  background-size: 20px 20px;
+  background: var(--tone, var(--tone-light));
 }
 .preview__img {
   max-width: 100%;

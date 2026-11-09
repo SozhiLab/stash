@@ -31,7 +31,7 @@ export function ElementCard(el, { folderName = null } = {}) {
     { class: 'el', role: 'button', tabindex: '0', 'aria-label': `Скопировать: ${el.name}` },
     h(
       'div',
-      { class: 'el__preview' },
+      { class: 'el__preview', 'data-tone': el.tone || 'light' },
       h('img', { src: thumbUrl(el), alt: '', loading: 'lazy', draggable: 'false' }),
       h('span', { class: 'el__done' }, icon('check', 26))
     ),

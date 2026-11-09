@@ -62,17 +62,55 @@ function drawToBlob(img, w, h, type, quality) {
   return canvasToBlob(canvas, type, quality);
 }
 
-// Returns the normalized original blob, a small thumbnail and the pixel size.
+// Picks a neutral backdrop that makes the element readable:
+// dark artwork -> 'light' gray, light artwork -> 'dark' charcoal, both -> 'mid' gray.
+const TONE_SAMPLE = 48;
+function toneFromImage(img) {
+  try {
+    const { w, h } = naturalSize(img);
+    const s = Math.min(1, TONE_SAMPLE / Math.max(w, h));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(w * s));
+    canvas.height = Math.max(1, Math.round(h * s));
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const px = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let n = 0;
+    let sum = 0;
+    let dark = 0;
+    let bright = 0;
+    for (let i = 0; i < px.length; i += 4) {
+      if (px[i + 3] < 48) continue;
+      const l = (0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]) / 255;
+      n++;
+      sum += l;
+      if (l < 0.3) dark++;
+      else if (l > 0.75) bright++;
+    }
+    if (n < 4) return 'light';
+    if (dark / n > 0.18 && bright / n > 0.18) return 'mid';
+    return sum / n > 0.68 ? 'dark' : 'light';
+  } catch (e) {
+    return 'light';
+  }
+}
+
+export async function toneOfBlob(blob) {
+  return toneFromImage(await loadImage(blob));
+}
+
+// Returns the normalized original blob, a small thumbnail, the pixel size and the backdrop tone.
 export async function prepareImage(file, kind) {
   const blob = file.type === MIME_BY_KIND[kind] ? file : new Blob([file], { type: MIME_BY_KIND[kind] });
   const img = await loadImage(blob);
   const { w, h } = naturalSize(img);
+  const tone = toneFromImage(img);
   let thumb = blob;
   if (kind !== 'svg') {
     const s = Math.min(1, THUMB_MAX / Math.max(w, h));
     thumb = await drawToBlob(img, Math.round(w * s), Math.round(h * s), 'image/webp', 0.88);
   }
-  return { blob, thumb, width: w, height: h };
+  return { blob, thumb, width: w, height: h, tone };
 }
 
 // Camera-roll photo -> reasonably small JPEG for use as the app background.
