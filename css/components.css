@@ -1162,3 +1162,295 @@
   letter-spacing: -0.4px;
   pointer-events: none;
 }
+
+/* ---------- folder scaling (container queries; older browsers keep the fixed sizes above) ---------- */
+.folder {
+  container-type: inline-size;
+}
+.folder__art {
+  max-width: 340px;
+  margin-bottom: clamp(6px, 6cqw, 12px);
+}
+.folder__more {
+  right: max(0px, calc(50% - 170px));
+  width: clamp(22px, 16cqw, 32px);
+  height: clamp(22px, 16cqw, 32px);
+}
+.folder__back {
+  border-radius: 0 clamp(8px, 10cqw, 26px) clamp(8px, 10cqw, 26px) clamp(8px, 10cqw, 26px);
+}
+.folder__back::before {
+  border-radius: clamp(5px, 6.5cqw, 17px) clamp(5px, 6.5cqw, 17px) 0 0;
+}
+.folder__front {
+  border-radius: clamp(8px, 10cqw, 26px);
+}
+.folder__paper {
+  border-radius: clamp(5px, 5.5cqw, 14px);
+  border-width: clamp(2px, 1.6cqw, 4px);
+}
+.folder__sticker {
+  width: clamp(20px, 19cqw, 60px);
+  height: clamp(20px, 19cqw, 60px);
+  right: clamp(5px, 5.5cqw, 16px);
+  bottom: clamp(5px, 5.5cqw, 16px);
+  border-radius: clamp(7px, 6.5cqw, 18px);
+  font-size: clamp(11px, 10cqw, 30px);
+}
+.folder__name {
+  font-size: clamp(11px, 9.5cqw, 20px);
+  margin-bottom: 5px;
+  padding: 0 2px;
+}
+.folder .count-pill {
+  font-size: clamp(9.5px, 7cqw, 13.5px);
+  padding: 2px clamp(6px, 6cqw, 11px);
+}
+@container (max-width: 104px) {
+  .folder .count-pill {
+    display: none;
+  }
+}
+
+/* ---------- folder size row ---------- */
+.size-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+}
+.size-row__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.size-row__ctl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 1 260px;
+  min-width: 0;
+  color: var(--text-3);
+}
+.size-row .range {
+  flex: 1;
+  min-width: 0;
+}
+.range--thin {
+  height: 28px;
+}
+.range--thin::-webkit-slider-thumb {
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+}
+.range--thin::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+}
+
+/* ---------- round floating add button ---------- */
+.fab--round {
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  justify-content: center;
+}
+
+/* ---------- folder chips in the upload sheet ---------- */
+.chips {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 188px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px;
+}
+.chip {
+  height: 40px;
+  padding: 0 14px 0 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast) var(--ease);
+}
+.chip:active {
+  transform: scale(0.95);
+}
+.chip__emoji {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  font-size: 14px;
+  line-height: 1;
+  color: #1a1a2a;
+  background: linear-gradient(160deg, hsl(var(--hue) 85% 90%), hsl(var(--hue) 70% 78%));
+}
+.chip.is-active {
+  background: var(--ink);
+  color: var(--ink-contrast);
+}
+.chip--new {
+  padding-left: 12px;
+  background: transparent;
+  border: 1.5px dashed var(--text-3);
+  color: var(--text-2);
+}
+
+/* ---------- settings ---------- */
+.btn--sm {
+  height: 38px;
+  padding: 0 14px;
+  font-size: 14px;
+  border-radius: 12px;
+}
+.settings {
+  display: grid;
+  gap: 22px;
+}
+.set-group__title {
+  margin: 0 4px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.set-card {
+  display: grid;
+  border-radius: 20px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.set-card > * + * {
+  border-top: 1px solid var(--line);
+}
+.set-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 62px;
+  padding: 10px 14px;
+  text-align: left;
+  transition: background var(--t-fast);
+}
+.set-row:hover {
+  background: var(--pill);
+}
+.set-row > .icon:last-child {
+  color: var(--text-3);
+}
+.set-row__ico {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--pill);
+}
+.set-row__text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.set-row__text strong,
+.set-ctl__head strong {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.set-row__text em,
+.set-ctl__head em {
+  font-style: normal;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--text-2);
+}
+.set-row--danger .set-row__ico,
+.set-row--danger strong {
+  color: var(--danger);
+}
+.set-ctl {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+.set-ctl__head {
+  display: grid;
+  gap: 2px;
+}
+.set-ctl .btn {
+  justify-self: start;
+}
+.set-foot {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-3);
+}
+.seg {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--pill);
+}
+.seg__btn {
+  height: 38px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-2);
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.seg__btn[aria-checked='true'] {
+  background: var(--ink);
+  color: var(--ink-contrast);
+}
+
+/* ---------- backup sheet ---------- */
+.backup {
+  display: grid;
+  gap: 24px;
+}
+.backup__block {
+  display: grid;
+  gap: 12px;
+}
+.backup__block h3 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+.backup__text,
+.backup__note {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.backup__ready {
+  display: grid;
+  gap: 12px;
+}
+.backup__ok {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.backup__ok .icon {
+  color: var(--success);
+}

@@ -2,13 +2,14 @@
 import { h } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { openSheet } from './BottomSheet.js';
+import { openFolderEditor } from './FolderEditor.js';
 import { toast } from './Toast.js';
 import { state, getFolder, addElements, createFolder } from '../store.js';
 import { detectKind, toneOfBlob } from '../lib/image.js';
 import { uid } from '../lib/id.js';
 import { prettyName, parseTags } from '../lib/format.js';
 
-const ACCEPT = 'image/png,image/jpeg,image/webp,image/svg+xml,image/gif,.png,.jpg,.jpeg,.webp,.svg,.gif';
+export const ACCEPT = 'image/png,image/jpeg,image/webp,image/svg+xml,image/gif,.png,.jpg,.jpeg,.webp,.svg,.gif';
 const LAST_FOLDER_KEY = 'stash:lastFolder';
 
 function readLastFolder() {
@@ -41,11 +42,49 @@ export function openUpload({ files = [], folderId = null } = {}) {
     h('strong', null, 'Выбрать файлы'),
     h('span', null, 'PNG, SVG, JPG, WebP. Можно сразу много.')
   );
-  const select = h(
-    'select',
-    { class: 'input select', id: 'upload-folder', onChange: (e) => (target = e.target.value) },
-    state.folders.map((f) => h('option', { value: f.id, selected: f.id === target }, `${f.emoji}  ${f.name}`))
-  );
+  // Folder list: one tap picks the destination, the last chip creates a new folder on the spot
+  const chips = h('div', { class: 'chips', role: 'radiogroup', 'aria-label': 'Папка' });
+  function paintChips(scroll = false) {
+    chips.replaceChildren(
+      ...state.folders.map((f) =>
+        h(
+          'button',
+          {
+            class: 'chip' + (f.id === target ? ' is-active' : ''),
+            type: 'button',
+            role: 'radio',
+            'aria-checked': String(f.id === target),
+            style: `--hue:${f.hue}`,
+            onClick: () => {
+              target = f.id;
+              paintChips();
+            },
+          },
+          h('span', { class: 'chip__emoji' }, f.emoji),
+          f.name
+        )
+      ),
+      h(
+        'button',
+        {
+          class: 'chip chip--new',
+          type: 'button',
+          onClick: () =>
+            openFolderEditor({
+              onCreated: (created) => {
+                target = created.id;
+                paintChips(true);
+              },
+            }),
+        },
+        icon('plus', 14),
+        'Новая папка'
+      )
+    );
+    const active = chips.querySelector('.is-active');
+    if (scroll && active) chips.scrollTop = Math.max(0, active.offsetTop - 8);
+  }
+  paintChips();
   const tagsInput = h('input', { class: 'input', id: 'upload-tags', placeholder: 'arrow, minimal, story' });
   const saveBtn = h('button', { class: 'btn btn--primary btn--block', type: 'button', disabled: true, onClick: save }, 'Добавить');
 
@@ -135,7 +174,7 @@ export function openUpload({ files = [], folderId = null } = {}) {
     input,
     dropzone,
     list,
-    h('label', { class: 'field', for: 'upload-folder' }, h('span', { class: 'field__label' }, 'Папка'), select),
+    h('div', { class: 'field' }, h('span', { class: 'field__label' }, 'В какую папку добавить'), chips),
     h(
       'label',
       { class: 'field', for: 'upload-tags' },
@@ -152,6 +191,7 @@ export function openUpload({ files = [], folderId = null } = {}) {
     onClose: () => items.forEach((it) => URL.revokeObjectURL(it.url)),
   });
 
+  requestAnimationFrame(() => paintChips(true));
   if (files.length) addFiles(files);
   return sheet;
 }

@@ -3,6 +3,8 @@ import { h } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { subscribe, getFolder, elementsIn, favorites, recent } from '../store.js';
 import { searchElements } from '../logic/search.js';
+import { sortElements } from '../logic/sort.js';
+import { getPref } from '../services/prefs.js';
 import { plural, EL_FORMS } from '../lib/format.js';
 import { SearchBar } from '../ui/SearchBar.js';
 import { ElementGrid } from '../ui/ElementCard.js';
@@ -56,7 +58,7 @@ export function ElementsView({ folderId = null, virtual = null }) {
     : null;
 
   function baseList() {
-    if (folderId) return elementsIn(folderId);
+    if (folderId) return sortElements(elementsIn(folderId), getPref('sort'));
     return virtual === 'favorites' ? favorites() : recent();
   }
 

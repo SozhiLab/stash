@@ -8,7 +8,7 @@ import { firstGrapheme } from '../lib/format.js';
 const EMOJI_PICKS = ['📁', '📱', '🎬', '🖼️', '✨', '➡️', '💬', '🔤', '🌈', '🧩', '🏷️', '💜', '🌿', '🔥', '☁️', '⭐'];
 
 // Create (no folder passed) or edit a folder
-export function openFolderEditor({ folder } = {}) {
+export function openFolderEditor({ folder, onCreated } = {}) {
   let emoji = folder ? folder.emoji : '📁';
   let hue = folder ? folder.hue : HUES[state.folders.length % HUES.length];
 
@@ -75,7 +75,8 @@ export function openFolderEditor({ folder } = {}) {
       await updateFolder(folder.id, { name, emoji, hue });
       toast('Папка обновлена', { icon: 'folder' });
     } else {
-      await createFolder({ name, emoji, hue });
+      const created = await createFolder({ name, emoji, hue });
+      if (onCreated) onCreated(created);
       toast('Папка создана', { icon: 'folder' });
     }
     sheet.close();

@@ -129,6 +129,63 @@ export async function moveFolder(id, dir) {
   notify();
 }
 
+// ---------- restore from backup ----------
+// Returns how many folders were created (existing ids are kept untouched)
+export async function importFolders(list) {
+  const base = state.folders.length ? Math.max(...state.folders.map((f) => f.order)) + 1 : 0;
+  const fresh = list
+    .filter((f) => f && f.id && !getFolder(f.id))
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
+  for (const [i, f] of fresh.entries()) {
+    const folder = {
+      id: String(f.id),
+      name: String(f.name || 'Папка'),
+      emoji: f.emoji || '📁',
+      hue: Number.isFinite(f.hue) ? f.hue : 265,
+      order: base + i,
+      createdAt: f.createdAt || Date.now(),
+    };
+    await repository.saveFolder(folder);
+    state.folders.push(folder);
+  }
+  notify();
+  return fresh.length;
+}
+
+// Returns true when added, false when an element with this id already exists
+export async function importElement(meta, source) {
+  if (!meta || getElement(meta.id) || !getFolder(meta.folderId)) return false;
+  const kind = ['png', 'jpg', 'webp', 'svg', 'gif'].includes(meta.kind) ? meta.kind : null;
+  if (!kind) throw new Error('unsupported type');
+  const { blob, thumb, width, height, tone } = await prepareImage(source, kind);
+  const el = {
+    id: String(meta.id),
+    folderId: meta.folderId,
+    name: String(meta.name || 'Без названия'),
+    tags: Array.isArray(meta.tags) ? meta.tags.map(String) : [],
+    kind,
+    mime: mimeOf(kind),
+    size: blob.size,
+    width,
+    height,
+    tone,
+    thumb,
+    favorite: !!meta.favorite,
+    lastUsedAt: meta.lastUsedAt || null,
+    useCount: meta.useCount || 0,
+    order: Number.isFinite(meta.order) ? meta.order : nextTopOrder(meta.folderId),
+    createdAt: meta.createdAt || Date.now(),
+  };
+  await repository.saveElement(el, blob);
+  state.elements.push(el);
+  return true;
+}
+
+// Re-render subscribers after a batch of silent changes
+export function refreshViews() {
+  notify();
+}
+
 // ---------- elements ----------
 // items: [{ file, name, tags, folderId }]
 export async function addElements(items, onProgress) {
@@ -191,6 +248,14 @@ export async function removeElement(id) {
   await repository.deleteElement(id);
   dropThumbUrl(id);
   state.elements = state.elements.filter((e) => e.id !== id);
+  notify();
+}
+
+export async function clearRecent() {
+  for (const el of state.elements.filter((e) => e.lastUsedAt)) {
+    el.lastUsedAt = null;
+    await repository.saveElement(el);
+  }
   notify();
 }
 

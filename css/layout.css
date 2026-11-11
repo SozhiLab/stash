@@ -123,9 +123,10 @@ body::before {
 
 /* Grids */
 .folder-grid {
+  --cols-auto: 2;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 28px 12px;
+  grid-template-columns: repeat(var(--cols, var(--cols-auto)), minmax(0, 1fr));
+  gap: 26px 12px;
 }
 .el-grid {
   display: grid;
@@ -140,7 +141,7 @@ body::before {
 /* Phones (portrait and landscape) keep two big folders per row */
 @media (min-width: 840px) {
   .folder-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    --cols-auto: 3;
   }
 }
 @media (min-width: 820px) {
@@ -150,8 +151,8 @@ body::before {
 }
 @media (min-width: 1080px) {
   .folder-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 40px 24px;
+    --cols-auto: 4;
+    gap: 36px 22px;
   }
 }
 @media (min-width: 1060px) {
@@ -162,7 +163,7 @@ body::before {
 }
 @media (min-width: 1300px) {
   .folder-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    --cols-auto: 5;
   }
 }
 

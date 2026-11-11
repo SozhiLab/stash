@@ -50,6 +50,7 @@ html = f"""<title>Штуки</title>
 <style>
 {css}
 </style>
+<script>try{{var t=localStorage.getItem('stash:theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}}catch(e){{}}</script>
 <main id="app" class="app"></main>
 <div id="overlay-root"></div>
 <div id="toast-root" aria-live="polite"></div>

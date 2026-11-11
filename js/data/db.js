@@ -49,6 +49,17 @@ export async function dbDelete(store, key) {
   return dbWrap(db.transaction(store, 'readwrite').objectStore(store).delete(key));
 }
 
+export async function dbClearAll() {
+  const db = await dbOpen();
+  const names = ['folders', 'elements', 'blobs', 'meta'];
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(names, 'readwrite');
+    names.forEach((n) => tx.objectStore(n).clear());
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
 // Several writes in one atomic transaction. fn receives { storeName: objectStore }.
 export async function dbBatch(storeNames, fn) {
   const db = await dbOpen();

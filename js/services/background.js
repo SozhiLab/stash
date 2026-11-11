@@ -52,6 +52,17 @@ export async function setBackgroundPhoto(file) {
   render();
 }
 
+// Used when restoring a backup: the blob is already a downscaled JPEG
+export async function restoreBackgroundBlob(blob, visibility) {
+  await repository.saveSetting('background', blob);
+  bgBlob = blob;
+  if (typeof visibility === 'number') {
+    previewVisibility(visibility);
+    await saveVisibility();
+  }
+  render();
+}
+
 export async function clearBackground() {
   await repository.deleteSetting('background');
   bgBlob = null;

@@ -11,7 +11,7 @@ import {
   saveVisibility,
 } from '../services/background.js';
 
-export function openBackgroundSheet() {
+export function openBackgroundSheet({ onClose } = {}) {
   let previewUrl = null;
   const body = h('div', { class: 'form' });
 
@@ -97,6 +97,9 @@ export function openBackgroundSheet() {
     title: 'Фон приложения',
     body,
     size: 'sm',
-    onClose: () => previewUrl && URL.revokeObjectURL(previewUrl),
+    onClose: () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      if (onClose) onClose();
+    },
   });
 }

@@ -1,6 +1,6 @@
 // Persistence boundary. The rest of the app only talks to this object.
 // To add cloud sync later (Supabase, Cloudflare R2 + D1...), replace this file's internals.
-import { dbGetAll, dbGet, dbPut, dbDelete, dbBatch } from './db.js';
+import { dbGetAll, dbGet, dbPut, dbDelete, dbClearAll, dbBatch } from './db.js';
 
 export const repository = {
   async loadAll() {
@@ -60,6 +60,10 @@ export const repository = {
   async getBlob(id) {
     const row = await dbGet('blobs', id);
     return row ? row.blob : null;
+  },
+
+  clearAll() {
+    return dbClearAll();
   },
 
   async requestPersistence() {

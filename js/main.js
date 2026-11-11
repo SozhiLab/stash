@@ -9,7 +9,9 @@ import { openUpload } from './ui/UploadModal.js';
 import { toast } from './ui/Toast.js';
 import { detectKind } from './lib/image.js';
 import { initBackground } from './services/background.js';
+import { applyTheme } from './services/theme.js';
 
+applyTheme();
 const app = document.getElementById('app');
 let current = null;
 
