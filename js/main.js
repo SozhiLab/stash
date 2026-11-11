@@ -14,6 +14,8 @@ import { applyTheme } from './services/theme.js';
 applyTheme();
 const app = document.getElementById('app');
 let current = null;
+let currentKey = null;
+const scrollMemory = new Map(); // route -> scroll position, so going back lands where you left
 
 function parseRoute() {
   const parts = location.hash.replace(/^#\/?/, '').split('/');
@@ -28,8 +30,17 @@ function currentFolderId() {
   return r.name === 'folder' ? r.id : null;
 }
 
+let lastScrollY = 0;
+window.addEventListener('scroll', () => (lastScrollY = window.scrollY), { passive: true });
+
+function routeKey(r) {
+  return r.name === 'folder' ? 'folder/' + r.id : r.name;
+}
+
 function showRoute() {
   const r = parseRoute();
+  const key = routeKey(r);
+  if (currentKey) scrollMemory.set(currentKey, lastScrollY);
   let view;
   if (r.name === 'folder') {
     if (!getFolder(r.id)) {
@@ -43,8 +54,21 @@ function showRoute() {
 
   if (current) current.destroy();
   current = view;
+  currentKey = key;
   app.replaceChildren(view.node);
-  window.scrollTo(0, 0);
+  const y = scrollMemory.get(key) || 0;
+  lastScrollY = y;
+  window.scrollTo(0, y);
+  // the list may finish laying out a moment later; retry until the page is tall enough
+  if (y) {
+    let tries = 0;
+    const restore = () => {
+      if (currentKey !== key) return;
+      window.scrollTo(0, y);
+      if (Math.abs(window.scrollY - y) > 2 && ++tries < 10) requestAnimationFrame(restore);
+    };
+    requestAnimationFrame(restore);
+  }
 }
 
 // ---------- keyboard ----------
