@@ -2,7 +2,8 @@
 import { repository } from './data/repository.js';
 import { DEFAULT_FOLDERS } from './data/defaults.js';
 import { uid } from './lib/id.js';
-import { detectKind, mimeOf, prepareImage, toneOfBlob } from './lib/image.js';
+import { detectKind, mimeOf, prepareImage, toneOfBlob, traitsOfBlob } from './lib/image.js';
+import { buildAutoTags, mergeTags } from './logic/autotags.js';
 
 export const state = { ready: false, folders: [], elements: [] };
 
@@ -195,12 +196,16 @@ export async function addElements(items, onProgress) {
     try {
       const kind = detectKind(item.file);
       if (!kind) throw new Error('unsupported type');
-      const { blob, thumb, width, height, tone } = await prepareImage(item.file, kind);
+      const { blob, thumb, width, height, tone, traits } = await prepareImage(item.file, kind);
+      const folder = getFolder(item.folderId);
+      const auto = item.autoTags
+        ? buildAutoTags({ name: item.name, traits, kind, folderName: folder && folder.name })
+        : [];
       const el = {
         id: uid(),
         folderId: item.folderId,
         name: item.name.trim() || 'Без названия',
-        tags: item.tags || [],
+        tags: mergeTags(item.tags, auto),
         kind,
         mime: mimeOf(kind),
         size: blob.size,
@@ -225,6 +230,31 @@ export async function addElements(items, onProgress) {
   }
   notify();
   return { added: items.length - failed, failed };
+}
+
+// Adds automatic tags to elements that are already in the library (keeps existing tags).
+export async function autoTagExisting(onProgress) {
+  let changed = 0;
+  let done = 0;
+  for (const el of state.elements) {
+    try {
+      const blob = await repository.getBlob(el.id);
+      const traits = blob ? await traitsOfBlob(blob) : null;
+      const folder = getFolder(el.folderId);
+      const tags = mergeTags(el.tags, buildAutoTags({ name: el.name, traits, kind: el.kind, folderName: folder && folder.name }));
+      if (tags.length !== (el.tags || []).length) {
+        el.tags = tags;
+        await repository.saveElement(el);
+        changed++;
+      }
+    } catch (e) {
+      console.warn('Auto-tag failed', e);
+    }
+    done++;
+    if (onProgress) onProgress(done, state.elements.length);
+  }
+  notify();
+  return changed;
 }
 
 export async function updateElement(id, patch) {

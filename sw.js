@@ -1,5 +1,5 @@
 // Offline shell cache. Bump VERSION when files change.
-const VERSION = 'stash-v6';
+const VERSION = 'stash-v7';
 const SHELL = [
   './',
   'index.html',
@@ -38,6 +38,7 @@ const SHELL = [
   'js/ui/BackgroundSheet.js',
   'js/lib/zip.js',
   'js/logic/sort.js',
+  'js/logic/autotags.js',
   'js/services/prefs.js',
   'js/services/theme.js',
   'js/services/backup.js',

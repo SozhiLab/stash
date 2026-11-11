@@ -10,6 +10,7 @@ import { getPref, setPref } from '../services/prefs.js';
 import { getBackgroundState } from '../services/background.js';
 import { repository } from '../data/repository.js';
 import { getTheme, setTheme } from '../services/theme.js';
+import { autoTagExisting } from '../store.js';
 import { formatSize } from '../lib/format.js';
 
 function settingsGroup(title, children) {
@@ -114,6 +115,32 @@ export function openSettingsSheet() {
     })
   );
 
+  const autotags = settingsControl(
+    'Автотеги при загрузке',
+    'Цвет, форма, слова из названия файла и название папки',
+    Segmented({
+      label: 'Автотеги',
+      value: getPref('autotags') ? 'on' : 'off',
+      options: [
+        { id: 'on', label: 'Включены' },
+        { id: 'off', label: 'Выключены' },
+      ],
+      onChange: (v) => setPref('autotags', v === 'on'),
+    })
+  );
+
+  const retag = settingsRow({
+    iconName: 'plus',
+    title: 'Проставить теги для старых элементов',
+    hint: 'Добавит автотеги к тому, что уже в библиотеке. Свои теги сохранятся',
+    onClick: async () => {
+      if (retag.hintEl) retag.hintEl.textContent = 'Работаю…';
+      const n = await autoTagExisting((d, t) => retag.hintEl && (retag.hintEl.textContent = `Обработано ${d} из ${t}`));
+      if (retag.hintEl) retag.hintEl.textContent = 'Добавит автотеги к тому, что уже в библиотеке. Свои теги сохранятся';
+      toast(n ? `Теги добавлены: ${n}` : 'Новых тегов нет', { icon: 'plus' });
+    },
+  });
+
   const backup = settingsRow({
     iconName: 'download',
     title: 'Резервная копия',
@@ -143,7 +170,7 @@ export function openSettingsSheet() {
     'div',
     { class: 'settings' },
     settingsGroup('Оформление', [theme, bg.node]),
-    settingsGroup('Элементы', [order]),
+    settingsGroup('Элементы', [order, autotags, retag.node]),
     settingsGroup('Данные', [backup.node, storageBlock()]),
     settingsGroup('Сброс', [reset.node]),
     h('p', { class: 'set-foot' }, 'Штуки. Всё хранится только на этом устройстве.')

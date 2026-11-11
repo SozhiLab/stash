@@ -95,6 +95,83 @@ function toneFromImage(img) {
   }
 }
 
+// Colour names, transparency and orientation for automatic tags.
+function colorName(r, g, b) {
+  const mx = Math.max(r, g, b) / 255;
+  const mn = Math.min(r, g, b) / 255;
+  const l = (mx + mn) / 2;
+  const d = mx - mn;
+  const sat = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+  if (l < 0.14) return 'чёрный';
+  if (l > 0.92 && sat < 0.5) return 'белый';
+  if (sat < 0.14) return l > 0.75 ? 'белый' : 'серый';
+  let hue;
+  const rr = r / 255;
+  const gg = g / 255;
+  const bb = b / 255;
+  if (mx === rr) hue = ((gg - bb) / d + 6) % 6;
+  else if (mx === gg) hue = (bb - rr) / d + 2;
+  else hue = (rr - gg) / d + 4;
+  hue *= 60;
+  if (hue < 15 || hue >= 345) return l > 0.7 ? 'розовый' : 'красный';
+  if (hue < 40) return l < 0.4 ? 'коричневый' : 'оранжевый';
+  if (hue < 68) return 'жёлтый';
+  if (hue < 165) return 'зелёный';
+  if (hue < 200) return 'бирюзовый';
+  if (hue < 255) return 'синий';
+  if (hue < 295) return 'фиолетовый';
+  return 'розовый';
+}
+
+function traitsFromImage(img) {
+  const { w, h } = naturalSize(img);
+  const ratio = w / h;
+  const shape = ratio >= 1.15 ? 'горизонтальный' : ratio <= 0.87 ? 'вертикальный' : 'квадрат';
+  const traits = { colors: [], transparent: false, shape };
+  try {
+    const s = Math.min(1, TONE_SAMPLE / Math.max(w, h));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(w * s));
+    canvas.height = Math.max(1, Math.round(h * s));
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    const px = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    const total = px.length / 4;
+    const counts = {};
+    let solid = 0;
+    let clear = 0;
+    for (let i = 0; i < px.length; i += 4) {
+      if (px[i + 3] < 48) {
+        clear++;
+        continue;
+      }
+      solid++;
+      const c = colorName(px[i], px[i + 1], px[i + 2]);
+      counts[c] = (counts[c] || 0) + 1;
+    }
+    traits.transparent = clear / total > 0.08;
+    if (solid >= 4) {
+      const ranked = Object.entries(counts)
+        .map(([name, n]) => [name, n / solid])
+        .sort((a, b) => b[1] - a[1]);
+      const neutral = ['чёрный', 'белый', 'серый'];
+      const neutralShare = ranked.filter(([n]) => neutral.includes(n)).reduce((a, [, f]) => a + f, 0);
+      traits.colors = ranked.filter(([, f]) => f >= 0.12).slice(0, 3).map(([n]) => n);
+      if (!traits.colors.length) traits.colors = [ranked[0][0]];
+      if (neutralShare > 0.92 && ranked.some(([n]) => n === 'чёрный') && ranked.some(([n]) => n === 'белый')) {
+        traits.colors.push('чёрно-белый');
+      }
+    }
+  } catch (e) {
+    /* tainted or unreadable canvas: skip colours */
+  }
+  return traits;
+}
+
+export async function traitsOfBlob(blob) {
+  return traitsFromImage(await loadImage(blob));
+}
+
 export async function toneOfBlob(blob) {
   return toneFromImage(await loadImage(blob));
 }
@@ -110,7 +187,7 @@ export async function prepareImage(file, kind) {
     const s = Math.min(1, THUMB_MAX / Math.max(w, h));
     thumb = await drawToBlob(img, Math.round(w * s), Math.round(h * s), 'image/webp', 0.88);
   }
-  return { blob, thumb, width: w, height: h, tone };
+  return { blob, thumb, width: w, height: h, tone, traits: traitsFromImage(img) };
 }
 
 // Camera-roll photo -> reasonably small JPEG for use as the app background.

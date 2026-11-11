@@ -6,6 +6,7 @@ import { openFolderEditor } from './FolderEditor.js';
 import { toast } from './Toast.js';
 import { state, getFolder, addElements, createFolder } from '../store.js';
 import { detectKind, toneOfBlob } from '../lib/image.js';
+import { getPref } from '../services/prefs.js';
 import { uid } from '../lib/id.js';
 import { prettyName, parseTags } from '../lib/format.js';
 
@@ -154,7 +155,7 @@ export function openUpload({ files = [], folderId = null } = {}) {
     }
     const tags = parseTags(tagsInput.value);
     const result = await addElements(
-      items.map((it) => ({ file: it.file, name: it.name, tags, folderId: target })),
+      items.map((it) => ({ file: it.file, name: it.name, tags, folderId: target, autoTags: getPref('autotags') })),
       (done, total) => (saveBtn.textContent = `Загрузка ${done}/${total}`)
     );
     writeLastFolder(target);
@@ -179,7 +180,14 @@ export function openUpload({ files = [], folderId = null } = {}) {
       'label',
       { class: 'field', for: 'upload-tags' },
       h('span', { class: 'field__label' }, 'Теги для всех (необязательно)'),
-      tagsInput
+      tagsInput,
+      h(
+        'span',
+        { class: 'field__hint' },
+        getPref('autotags')
+          ? 'Автотеги включены: цвет, форма, слова из названия и папка добавятся сами.'
+          : 'Автотеги выключены (можно включить в настройках).'
+      )
     )
   );
 
