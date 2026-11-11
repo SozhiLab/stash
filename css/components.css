@@ -1454,3 +1454,10 @@
 .backup__ok .icon {
   color: var(--success);
 }
+
+/* round + button centred at the bottom */
+.fab--round {
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+}

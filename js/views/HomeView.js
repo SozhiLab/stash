@@ -11,6 +11,7 @@ import { SizeSlider, getCols } from '../ui/SizeSlider.js';
 import { FabAdd } from '../ui/FabAdd.js';
 import { openUpload } from '../ui/UploadModal.js';
 import { openFolderEditor } from '../ui/FolderEditor.js';
+import { openBackgroundSheet } from '../ui/BackgroundSheet.js';
 import { openSettingsSheet } from '../ui/SettingsSheet.js';
 
 function homePill(label, href, active, iconName) {
@@ -37,6 +38,16 @@ export function HomeView() {
       onClick: () => openSettingsSheet(),
     },
     icon('settings', 22)
+  );
+  const bgBtn = h(
+    'button',
+    {
+      class: 'icon-btn icon-btn--lg',
+      type: 'button',
+      'aria-label': 'Фон приложения',
+      onClick: () => openBackgroundSheet(),
+    },
+    icon('image', 22)
   );
   const search = SearchBar({
     placeholder: 'Найти: стрелка, кавычки, story…',
@@ -124,7 +135,7 @@ export function HomeView() {
   const node = h(
     'section',
     { class: 'view home' },
-    h('header', { class: 'head' }, h('div', null, h('h1', { class: 'display' }, 'Штуки'), sub), settingsBtn),
+    h('header', { class: 'head' }, h('div', null, h('h1', { class: 'display' }, 'Штуки'), sub), h('div', { class: 'head__actions' }, bgBtn, settingsBtn)),
     search,
     pills,
     slider.node,
