@@ -9,6 +9,7 @@ import { plural, EL_FORMS } from '../lib/format.js';
 import { SearchBar } from '../ui/SearchBar.js';
 import { ElementGrid } from '../ui/ElementCard.js';
 import { EmptyState } from '../ui/EmptyState.js';
+import { FabAdd } from '../ui/FabAdd.js';
 import { openUpload } from '../ui/UploadModal.js';
 import { openFolderMenu } from '../ui/FolderMenu.js';
 
@@ -53,9 +54,7 @@ export function ElementsView({ folderId = null, virtual = null }) {
   });
   const pills = h('div', { class: 'pills', role: 'group', 'aria-label': 'Фильтры' });
   const content = h('div', { class: 'elements__content' });
-  const fab = folderId
-    ? h('button', { class: 'fab', type: 'button', onClick: () => openUpload({ folderId }) }, icon('plus', 20), 'Добавить')
-    : null;
+  const fab = folderId ? FabAdd({ folderId }) : null;
 
   function baseList() {
     if (folderId) return sortElements(elementsIn(folderId), getPref('sort'));

@@ -1,7 +1,7 @@
 import { h } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { thumbUrl } from '../store.js';
-import { copyElement } from '../actions/elementActions.js';
+import { copyElement, shareElement } from '../actions/elementActions.js';
 import { openElementMenu } from './ElementMenu.js';
 
 // Main action of the card is copying. The menu button is secondary.
@@ -23,6 +23,20 @@ export function ElementCard(el, { folderName = null } = {}) {
     },
     icon('more', 18)
   );
+  const shareBtn = h(
+    'button',
+    {
+      class: 'icon-btn icon-btn--sm icon-btn--glass el__share',
+      type: 'button',
+      'aria-label': `Поделиться: ${el.name}`,
+      onClick: (e) => {
+        e.stopPropagation();
+        shareElement(el);
+      },
+    },
+    icon('share', 18)
+  );
+  shareBtn.addEventListener('keydown', (e) => e.stopPropagation());
   // keyboard activation of the nested button must not trigger a copy
   moreBtn.addEventListener('keydown', (e) => e.stopPropagation());
 
@@ -33,7 +47,8 @@ export function ElementCard(el, { folderName = null } = {}) {
       'div',
       { class: 'el__preview', 'data-tone': el.tone || 'light' },
       h('img', { src: thumbUrl(el), alt: '', loading: 'lazy', draggable: 'false' }),
-      h('span', { class: 'el__done' }, icon('check', 26))
+      h('span', { class: 'el__done' }, icon('check', 26)),
+      shareBtn
     ),
     el.favorite ? h('span', { class: 'el__fav', 'aria-label': 'В избранном' }, icon('starFill', 14)) : null,
     moreBtn,

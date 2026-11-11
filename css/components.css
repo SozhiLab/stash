@@ -1461,3 +1461,11 @@
   right: 0;
   margin-inline: auto;
 }
+
+/* share button right on the element card */
+.el__share {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 2;
+}
