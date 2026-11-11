@@ -26,7 +26,7 @@ export function ElementCard(el, { folderName = null } = {}) {
   const shareBtn = h(
     'button',
     {
-      class: 'icon-btn icon-btn--sm icon-btn--glass el__share',
+      class: 'el__share',
       type: 'button',
       'aria-label': `Поделиться: ${el.name}`,
       onClick: (e) => {
@@ -34,7 +34,8 @@ export function ElementCard(el, { folderName = null } = {}) {
         shareElement(el);
       },
     },
-    icon('share', 18)
+    icon('share', 18),
+    'Поделиться'
   );
   shareBtn.addEventListener('keydown', (e) => e.stopPropagation());
   // keyboard activation of the nested button must not trigger a copy
@@ -47,12 +48,12 @@ export function ElementCard(el, { folderName = null } = {}) {
       'div',
       { class: 'el__preview', 'data-tone': el.tone || 'light' },
       h('img', { src: thumbUrl(el), alt: '', loading: 'lazy', draggable: 'false' }),
-      h('span', { class: 'el__done' }, icon('check', 26)),
-      shareBtn
+      h('span', { class: 'el__done' }, icon('check', 26))
     ),
     el.favorite ? h('span', { class: 'el__fav', 'aria-label': 'В избранном' }, icon('starFill', 14)) : null,
     moreBtn,
-    h('div', { class: 'el__info' }, h('div', { class: 'el__name' }, el.name), h('div', { class: 'el__meta' }, meta))
+    h('div', { class: 'el__info' }, h('div', { class: 'el__name' }, el.name), h('div', { class: 'el__meta' }, meta)),
+    shareBtn
   );
 
   card.addEventListener('click', () => copyElement(el, card));
