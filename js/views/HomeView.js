@@ -1,6 +1,6 @@
 import { h } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
-import { state, subscribe, getFolder, groupByFolder } from '../store.js';
+import { state, subscribe, getFolder, groupByFolder, reorderFolders } from '../store.js';
 import { searchElements } from '../logic/search.js';
 import { plural, EL_FORMS, FOLDER_FORMS } from '../lib/format.js';
 import { SearchBar } from '../ui/SearchBar.js';
@@ -8,7 +8,9 @@ import { FolderCard } from '../ui/FolderCard.js';
 import { ElementGrid } from '../ui/ElementCard.js';
 import { EmptyState } from '../ui/EmptyState.js';
 import { SizeSlider, getCols } from '../ui/SizeSlider.js';
+import { toast } from '../ui/Toast.js';
 import { FabAdd } from '../ui/FabAdd.js';
+import { enableFolderDrag } from '../ui/folderDrag.js';
 import { openUpload } from '../ui/UploadModal.js';
 import { openFolderEditor } from '../ui/FolderEditor.js';
 import { openBackgroundSheet } from '../ui/BackgroundSheet.js';
@@ -85,7 +87,14 @@ export function HomeView() {
       )
     );
 
+  let dragging = false;
+  let pendingUpdate = false;
+
   function update() {
+    if (dragging) {
+      pendingUpdate = true;
+      return;
+    }
     const total = state.elements.length;
     sub.textContent = `${plural(total, EL_FORMS)} · ${plural(state.folders.length, FOLDER_FORMS)}`;
 
@@ -111,6 +120,7 @@ export function HomeView() {
       { class: 'folder-grid' + (first ? ' is-enter' : ''), style: getCols() ? `--cols:${getCols()}` : null },
       state.folders.map((f, i) => {
         const card = FolderCard({ folder: f, items: groups.get(f.id) || [] });
+        card.dataset.folderId = f.id;
         card.style.setProperty('--i', Math.min(i, 12));
         return card;
       }),
@@ -131,6 +141,24 @@ export function HomeView() {
 
   update();
   const off = subscribe(update);
+  try {
+    if (state.folders.length > 1 && !localStorage.getItem('stash:dragHint')) {
+      localStorage.setItem('stash:dragHint', '1');
+      setTimeout(() => toast('Удерживайте папку и перетащите, чтобы поменять порядок', { icon: 'folder', duration: 4200 }), 1200);
+    }
+  } catch (e) {
+    /* storage unavailable */
+  }
+  const stopDrag = enableFolderDrag(content, {
+    onActiveChange: (on) => {
+      dragging = on;
+      if (!on && pendingUpdate) {
+        pendingUpdate = false;
+        update();
+      }
+    },
+    onDrop: (ids) => reorderFolders(ids),
+  });
 
   const node = h(
     'section',
@@ -146,6 +174,7 @@ export function HomeView() {
     node,
     destroy: () => {
       off();
+      stopDrag();
       slider.destroy();
     },
   };

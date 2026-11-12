@@ -53,6 +53,35 @@ export async function shareElement(el) {
   }
 }
 
+// Share several elements at once (one system share sheet with many files)
+export async function shareElements(list) {
+  try {
+    const files = [];
+    for (const el of list) {
+      const { blob, ext } = await exportBlob(el);
+      files.push(new File([blob], safeFileName(el.name, ext), { type: blob.type }));
+    }
+    if (navigator.share && navigator.canShare && navigator.canShare({ files })) {
+      try {
+        await navigator.share({ files });
+        list.forEach((el) => markUsed(el.id));
+        return true;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return false;
+        throw e;
+      }
+    }
+    files.forEach((f) => downloadBlob(f, f.name));
+    list.forEach((el) => markUsed(el.id));
+    toast('Меню «Поделиться» недоступно здесь, файлы скачаны', { icon: 'download', duration: 2600 });
+    return true;
+  } catch (e) {
+    console.warn('Batch share failed', e);
+    toast('Не удалось поделиться', { tone: 'error', icon: 'close' });
+    return false;
+  }
+}
+
 export async function downloadElement(el) {
   try {
     const { blob, ext } = await exportBlob(el);

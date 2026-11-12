@@ -4,6 +4,8 @@ import { DEFAULT_FOLDERS } from './data/defaults.js';
 import { uid } from './lib/id.js';
 import { detectKind, mimeOf, prepareImage, toneOfBlob, traitsOfBlob } from './lib/image.js';
 import { buildAutoTags, mergeTags } from './logic/autotags.js';
+import { colorsOf } from './logic/colors.js';
+import { hashBlob } from './lib/hash.js';
 
 export const state = { ready: false, folders: [], elements: [] };
 
@@ -75,8 +77,12 @@ export async function init() {
   state.elements = elements;
   state.ready = true;
   notify();
-  backfillTones();
+  metaReady = backfillTones().then(backfillMeta);
 }
+
+let metaReady = Promise.resolve();
+// Resolves when fingerprints of older elements are computed (used before duplicate checks)
+export const whenMetaReady = () => metaReady;
 
 // Elements added before backdrop tones existed get one computed from their thumbnail
 async function backfillTones() {
@@ -91,6 +97,26 @@ async function backfillTones() {
     repository.saveElement(el).catch(() => {});
   }
   notify();
+}
+
+// Older elements get a content hash (duplicate check) and colour names (colour filter)
+async function backfillMeta() {
+  const todo = state.elements.filter((e) => !e.hash || !e.colors);
+  for (const el of todo) {
+    try {
+      const blob = await repository.getBlob(el.id);
+      if (!el.hash && blob) el.hash = await hashBlob(blob);
+      if (!el.colors) el.colors = colorsOf(await traitsOfBlob(el.thumb || blob));
+      await repository.saveElement(el);
+    } catch (e) {
+      if (!el.colors) el.colors = [];
+    }
+  }
+  if (todo.length) notify();
+}
+
+export function findDuplicate(hash) {
+  return hash ? state.elements.find((e) => e.hash === hash) : undefined;
 }
 
 // ---------- folders ----------
@@ -130,6 +156,17 @@ export async function moveFolder(id, dir) {
   notify();
 }
 
+// Set the folder order from a full list of ids (drag and drop)
+export async function reorderFolders(ids) {
+  const byId = new Map(state.folders.map((f) => [f.id, f]));
+  const next = ids.map((id) => byId.get(id)).filter(Boolean);
+  state.folders.forEach((f) => !next.includes(f) && next.push(f));
+  state.folders = next;
+  state.folders.forEach((f, i) => (f.order = i));
+  await repository.saveFolders(state.folders);
+  notify();
+}
+
 // ---------- restore from backup ----------
 // Returns how many folders were created (existing ids are kept untouched)
 export async function importFolders(list) {
@@ -158,7 +195,8 @@ export async function importElement(meta, source) {
   if (!meta || getElement(meta.id) || !getFolder(meta.folderId)) return false;
   const kind = ['png', 'jpg', 'webp', 'svg', 'gif'].includes(meta.kind) ? meta.kind : null;
   if (!kind) throw new Error('unsupported type');
-  const { blob, thumb, width, height, tone } = await prepareImage(source, kind);
+  const { blob, thumb, width, height, tone, traits } = await prepareImage(source, kind);
+  const hash = await hashBlob(blob);
   const el = {
     id: String(meta.id),
     folderId: meta.folderId,
@@ -171,6 +209,8 @@ export async function importElement(meta, source) {
     height,
     tone,
     thumb,
+    hash,
+    colors: colorsOf(traits),
     favorite: !!meta.favorite,
     lastUsedAt: meta.lastUsedAt || null,
     useCount: meta.useCount || 0,
@@ -198,6 +238,7 @@ export async function addElements(items, onProgress) {
       if (!kind) throw new Error('unsupported type');
       const { blob, thumb, width, height, tone, traits } = await prepareImage(item.file, kind);
       const folder = getFolder(item.folderId);
+      const hash = await hashBlob(blob);
       const auto = item.autoTags
         ? buildAutoTags({ name: item.name, traits, kind, folderName: folder && folder.name })
         : [];
@@ -213,6 +254,8 @@ export async function addElements(items, onProgress) {
         height,
         tone,
         thumb,
+        hash,
+        colors: colorsOf(traits),
         favorite: false,
         lastUsedAt: null,
         useCount: 0,
@@ -267,6 +310,40 @@ export async function updateElement(id, patch) {
 
 export function moveElement(id, folderId) {
   return updateElement(id, { folderId, order: nextTopOrder(folderId) });
+}
+
+// ---------- batch actions (selection mode) ----------
+export async function moveElements(ids, folderId) {
+  // keep the selection's relative order at the top of the target folder
+  for (const id of [...ids].reverse()) {
+    const el = getElement(id);
+    if (!el) continue;
+    el.folderId = folderId;
+    el.order = nextTopOrder(folderId);
+    await repository.saveElement(el);
+  }
+  notify();
+}
+
+export async function removeElements(ids) {
+  for (const id of ids) {
+    await repository.deleteElement(id);
+    dropThumbUrl(id);
+  }
+  const gone = new Set(ids);
+  state.elements = state.elements.filter((e) => !gone.has(e.id));
+  notify();
+}
+
+export async function tagElements(ids, { add = [], remove = [] }) {
+  const drop = new Set(remove);
+  for (const id of ids) {
+    const el = getElement(id);
+    if (!el) continue;
+    el.tags = mergeTags((el.tags || []).filter((t) => !drop.has(t)), add);
+    await repository.saveElement(el);
+  }
+  notify();
 }
 
 export function toggleFavorite(id) {

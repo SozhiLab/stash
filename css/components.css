@@ -1483,3 +1483,156 @@
   transform: scale(0.96);
   opacity: 0.85;
 }
+
+/* ---------- selection mode ---------- */
+.el__check {
+  position: absolute;
+  top: 17px;
+  left: 17px;
+  width: 26px;
+  height: 26px;
+  display: none;
+  place-items: center;
+  border-radius: 50%;
+  border: 2px solid var(--text-3);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  color: transparent;
+  z-index: 2;
+}
+.is-selecting .el__check {
+  display: grid;
+}
+.is-selecting .el__share,
+.is-selecting .el__more,
+.is-selecting .el__fav {
+  display: none;
+}
+.is-selecting .el {
+  cursor: default;
+}
+.el.is-selected {
+  box-shadow: 0 0 0 2.5px var(--ink);
+  background: color-mix(in srgb, var(--ink) 10%, var(--surface-2));
+}
+.el.is-selected .el__check {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--ink-contrast);
+}
+.el-selectbtn {
+  flex: none;
+}
+.selbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  margin-inline: auto;
+  width: min(440px, calc(100% - 24px));
+  z-index: 40;
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 24px;
+  background: var(--ink);
+  color: var(--ink-contrast);
+  box-shadow: var(--shadow-3, 0 14px 40px rgba(0, 0, 0, 0.3));
+  animation: rise 0.25s var(--ease) both;
+}
+.selbar__btn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 2px 7px;
+  border-radius: 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: inherit;
+}
+.selbar__btn:active:not(:disabled) {
+  background: color-mix(in srgb, var(--ink-contrast) 16%, transparent);
+}
+.selbar__btn:disabled {
+  opacity: 0.4;
+}
+.selbar__btn.is-danger {
+  color: #ff7a7a;
+}
+
+/* ---------- colour filter ---------- */
+.swatches {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 4px 2px;
+}
+.swatches::-webkit-scrollbar {
+  display: none;
+}
+.swatch {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 18%, transparent);
+  transition: transform var(--t-fast) var(--ease);
+}
+.swatch.is-active {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--text);
+  transform: scale(1.08);
+}
+
+/* ---------- duplicates in the upload sheet ---------- */
+.up-row__main {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+}
+.up-row.is-dup .up-row__thumb {
+  opacity: 0.55;
+}
+.up-row__dup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  padding: 0 8px 4px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #d9822b;
+}
+.up-row__dupbtn {
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  color: var(--text);
+}
+
+/* ---------- dragging folders ---------- */
+.folder {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.folder.is-placeholder {
+  opacity: 0.3;
+}
+.folder--ghost {
+  position: fixed;
+  z-index: 200;
+  margin: 0;
+  pointer-events: none;
+  transform: scale(1.06) rotate(1.5deg);
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.3));
+  animation: none;
+}
+body.is-dragging {
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: grabbing;
+}

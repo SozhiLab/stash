@@ -4,7 +4,8 @@ import { icon } from '../lib/icons.js';
 import { openSheet } from './BottomSheet.js';
 import { openFolderEditor } from './FolderEditor.js';
 import { toast } from './Toast.js';
-import { state, getFolder, addElements, createFolder } from '../store.js';
+import { state, getFolder, addElements, createFolder, findDuplicate, whenMetaReady } from '../store.js';
+import { hashBlob } from '../lib/hash.js';
 import { detectKind, toneOfBlob } from '../lib/image.js';
 import { getPref } from '../services/prefs.js';
 import { uid } from '../lib/id.js';
@@ -89,20 +90,50 @@ export function openUpload({ files = [], folderId = null } = {}) {
   const tagsInput = h('input', { class: 'input', id: 'upload-tags', placeholder: 'arrow, minimal, story' });
   const saveBtn = h('button', { class: 'btn btn--primary btn--block', type: 'button', disabled: true, onClick: save }, 'Добавить');
 
+  const toAdd = () => items.filter((it) => !it.dup || it.keep);
+
   function paint() {
     list.replaceChildren(
       ...items.map((it) => {
         it.thumbEl = h('div', { class: 'up-row__thumb', 'data-tone': it.tone || 'light' }, h('img', { src: it.url, alt: '' }));
+        const dupText = it.dup
+          ? it.dup === 'batch'
+            ? 'Такой файл уже выбран выше'
+            : `Уже есть в «${(getFolder(it.dup.folderId) || {}).name || 'библиотеке'}» как «${it.dup.name}»`
+          : '';
         return h(
           'div',
-          { class: 'up-row' },
+          { class: 'up-row' + (it.dup && !it.keep ? ' is-dup' : '') },
           it.thumbEl,
-          h('input', {
-            class: 'input up-row__name',
-            value: it.name,
-            'aria-label': 'Название',
-            onInput: (e) => (it.name = e.target.value),
-          }),
+          h(
+            'div',
+            { class: 'up-row__main' },
+            h('input', {
+              class: 'input up-row__name',
+              value: it.name,
+              'aria-label': 'Название',
+              onInput: (e) => (it.name = e.target.value),
+            }),
+            it.dup
+              ? h(
+                  'div',
+                  { class: 'up-row__dup' },
+                  h('span', null, it.keep ? `Дубликат. ${dupText}` : `${dupText}. Не будет добавлен`),
+                  h(
+                    'button',
+                    {
+                      class: 'up-row__dupbtn',
+                      type: 'button',
+                      onClick: () => {
+                        it.keep = !it.keep;
+                        paint();
+                      },
+                    },
+                    it.keep ? 'Не добавлять' : 'Всё равно добавить'
+                  )
+                )
+              : null
+          ),
           h(
             'button',
             {
@@ -120,8 +151,9 @@ export function openUpload({ files = [], folderId = null } = {}) {
         );
       })
     );
-    saveBtn.disabled = !items.length;
-    saveBtn.textContent = items.length ? `Добавить: ${items.length}` : 'Добавить';
+    const count = toAdd().length;
+    saveBtn.disabled = !count;
+    saveBtn.textContent = count ? `Добавить: ${count}` : 'Добавить';
     dropzone.classList.toggle('is-compact', items.length > 0);
   }
 
@@ -132,8 +164,18 @@ export function openUpload({ files = [], folderId = null } = {}) {
         skipped++;
         continue;
       }
-      const item = { id: uid(), file, name: prettyName(file.name), url: URL.createObjectURL(file), tone: 'light', thumbEl: null };
+      const item = { id: uid(), file, name: prettyName(file.name), url: URL.createObjectURL(file), tone: 'light', thumbEl: null, dup: null, keep: false };
       items.push(item);
+      // duplicate check: same bytes already in the library or already picked in this window
+      hashBlob(file)
+        .then(async (hash) => {
+          await whenMetaReady();
+          item.hash = hash;
+          const earlier = items.find((x) => x !== item && x.hash === hash && items.indexOf(x) < items.indexOf(item));
+          item.dup = earlier ? 'batch' : findDuplicate(hash) || null;
+          if (item.dup) paint();
+        })
+        .catch(() => {});
       // pick the backdrop in the background; update the thumb in place so typing is not interrupted
       toneOfBlob(file)
         .then((tone) => {
@@ -147,7 +189,8 @@ export function openUpload({ files = [], folderId = null } = {}) {
   }
 
   async function save() {
-    if (!items.length) return;
+    const chosen = toAdd();
+    if (!chosen.length) return;
     saveBtn.disabled = true;
     if (!target) {
       const f = await createFolder({ name: 'Мои элементы', emoji: '🗂️', hue: 265 });
@@ -155,7 +198,7 @@ export function openUpload({ files = [], folderId = null } = {}) {
     }
     const tags = parseTags(tagsInput.value);
     const result = await addElements(
-      items.map((it) => ({ file: it.file, name: it.name, tags, folderId: target, autoTags: getPref('autotags') })),
+      chosen.map((it) => ({ file: it.file, name: it.name, tags, folderId: target, autoTags: getPref('autotags') })),
       (done, total) => (saveBtn.textContent = `Загрузка ${done}/${total}`)
     );
     writeLastFolder(target);

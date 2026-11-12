@@ -1,7 +1,7 @@
 // One screen for a real folder and for the virtual lists "favorites" and "recent".
 import { h } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
-import { subscribe, getFolder, elementsIn, favorites, recent } from '../store.js';
+import { subscribe, getFolder, getElement, elementsIn, favorites, recent, removeElements } from '../store.js';
 import { searchElements } from '../logic/search.js';
 import { sortElements } from '../logic/sort.js';
 import { getPref } from '../services/prefs.js';
@@ -10,6 +10,12 @@ import { SearchBar } from '../ui/SearchBar.js';
 import { ElementGrid } from '../ui/ElementCard.js';
 import { EmptyState } from '../ui/EmptyState.js';
 import { FabAdd } from '../ui/FabAdd.js';
+import { SelectionBar } from '../ui/SelectionBar.js';
+import { openMoveMany, openTagMany } from '../ui/BatchSheets.js';
+import { confirmSheet } from '../ui/BottomSheet.js';
+import { toast } from '../ui/Toast.js';
+import { shareElements } from '../actions/elementActions.js';
+import { COLOR_SWATCH, COLOR_ORDER } from '../logic/colors.js';
 import { openUpload } from '../ui/UploadModal.js';
 import { openFolderMenu } from '../ui/FolderMenu.js';
 
@@ -26,6 +32,9 @@ export function ElementsView({ folderId = null, virtual = null }) {
   let filter = 'all';
   let query = '';
   let first = true;
+  let colorFilter = null;
+  let selecting = false;
+  const selected = new Set();
 
   const folder = () => (folderId ? getFolder(folderId) : null);
   const virtualTitle = virtual === 'favorites' ? 'Избранное' : 'Недавние';
@@ -45,6 +54,19 @@ export function ElementsView({ folderId = null, virtual = null }) {
         icon('more', 22)
       )
     : null;
+  const selectBtn = h('button', { class: 'btn btn--sm el-selectbtn', type: 'button', onClick: () => onSelectButton() }, 'Выбрать');
+  const cancelBtn = h(
+    'button',
+    { class: 'icon-btn', type: 'button', 'aria-label': 'Отменить выбор', hidden: true, onClick: () => setSelecting(false) },
+    icon('close', 22)
+  );
+  const swatches = h('div', { class: 'swatches', role: 'group', 'aria-label': 'Фильтр по цвету' });
+  const selbar = SelectionBar([
+    { label: 'Поделиться', icon: 'share', onClick: () => doShare() },
+    { label: 'В папку', icon: 'folder', onClick: () => openMoveMany([...selected], () => setSelecting(false)) },
+    { label: 'Теги', icon: 'edit', onClick: () => openTagMany([...selected], () => setSelecting(false)) },
+    { label: 'Удалить', icon: 'trash', danger: true, onClick: () => doDelete() },
+  ]);
   const search = SearchBar({
     placeholder: folderId ? 'Искать в папке' : 'Искать в списке',
     onInput: (q) => {
@@ -70,6 +92,7 @@ export function ElementsView({ folderId = null, virtual = null }) {
     if (filter === 'fav') out = out.filter((e) => e.favorite);
     else if (filter === 'recent') out = out.filter((e) => e.lastUsedAt).sort((a, b) => b.lastUsedAt - a.lastUsedAt);
     else if (['png', 'svg', 'jpg'].includes(filter)) out = out.filter((e) => e.kind === filter);
+    if (colorFilter) out = out.filter((e) => (e.colors || []).includes(colorFilter));
     if (query) out = searchElements(out, getFolder, query);
     return out;
   }
@@ -91,6 +114,102 @@ export function ElementsView({ folderId = null, virtual = null }) {
     return EmptyState({ emoji: '🔎', title: 'Ничего не найдено', text: 'Смените фильтр или поисковое слово.' });
   }
 
+  let lastShown = [];
+  const selectCtx = {
+    isActive: () => selecting,
+    isSelected: (id) => selected.has(id),
+    toggle: (id, card) => {
+      if (selected.has(id)) selected.delete(id);
+      else selected.add(id);
+      card.classList.toggle('is-selected', selected.has(id));
+      paintSelection();
+    },
+    start: (id, card) => {
+      setSelecting(true);
+      selected.add(id);
+      card.classList.add('is-selected');
+      paintSelection();
+    },
+  };
+
+  function setSelecting(on) {
+    selecting = on;
+    selected.clear();
+    node.classList.toggle('is-selecting', on);
+    content.querySelectorAll('.el.is-selected').forEach((c) => c.classList.remove('is-selected'));
+    paintSelection();
+  }
+
+  function paintSelection() {
+    const n = selected.size;
+    selbar.setCount(selecting ? n : 0);
+    cancelBtn.hidden = !selecting;
+    back.hidden = selecting;
+    if (moreBtn) moreBtn.hidden = selecting;
+    if (fab) fab.hidden = selecting;
+    const allOn = lastShown.length > 0 && lastShown.every((e) => selected.has(e.id));
+    selectBtn.textContent = selecting ? (allOn ? 'Снять' : 'Все') : 'Выбрать';
+    selectBtn.hidden = !selecting && lastShown.length === 0;
+    sub.textContent = selecting ? (n ? `Выбрано: ${n}` : 'Выберите элементы') : plural(baseList().length, EL_FORMS);
+  }
+
+  function onSelectButton() {
+    if (!selecting) {
+      setSelecting(true);
+      return;
+    }
+    const allOn = lastShown.length > 0 && lastShown.every((e) => selected.has(e.id));
+    selected.clear();
+    if (!allOn) lastShown.forEach((e) => selected.add(e.id));
+    content.querySelectorAll('.el').forEach((c, i) => c.classList.toggle('is-selected', !allOn && !!lastShown[i]));
+    paintSelection();
+  }
+
+  const chosen = () => [...selected].map(getElement).filter(Boolean);
+
+  async function doShare() {
+    const list = chosen();
+    if (!list.length) return;
+    toast(`Готовлю файлы: ${list.length}`, { icon: 'share', duration: 1200 });
+    if (await shareElements(list)) setSelecting(false);
+  }
+
+  async function doDelete() {
+    const ids = [...selected];
+    if (!ids.length) return;
+    const ok = await confirmSheet({
+      title: `Удалить выбранное (${ids.length})?`,
+      message: 'Элементы будут удалены без возможности восстановления.',
+    });
+    if (!ok) return;
+    await removeElements(ids);
+    setSelecting(false);
+    toast(`Удалено: ${ids.length}`, { icon: 'trash' });
+  }
+
+  function paintSwatches(base) {
+    const present = new Set(base.flatMap((e) => e.colors || []));
+    if (colorFilter && !present.has(colorFilter)) colorFilter = null;
+    const names = COLOR_ORDER.filter((c) => present.has(c));
+    swatches.hidden = names.length < 2;
+    swatches.replaceChildren(
+      ...names.map((c) =>
+        h('button', {
+          class: 'swatch' + (colorFilter === c ? ' is-active' : ''),
+          type: 'button',
+          title: c,
+          'aria-label': `Цвет: ${c}`,
+          'aria-pressed': String(colorFilter === c),
+          style: `--c:${COLOR_SWATCH[c]}`,
+          onClick: () => {
+            colorFilter = colorFilter === c ? null : c;
+            update();
+          },
+        })
+      )
+    );
+  }
+
   function update() {
     if (folderId && !folder()) {
       location.hash = '#/';
@@ -101,6 +220,7 @@ export function ElementsView({ folderId = null, virtual = null }) {
 
     const base = baseList();
     sub.textContent = plural(base.length, EL_FORMS);
+    paintSwatches(base);
 
     pills.replaceChildren(
       ...visibleFilters().map((p) =>
@@ -122,12 +242,16 @@ export function ElementsView({ folderId = null, virtual = null }) {
     );
 
     const list = filtered(base);
+    lastShown = list;
+    // drop selected items that vanished (deleted, moved or filtered out)
+    for (const id of [...selected]) if (!list.some((e) => e.id === id)) selected.delete(id);
     content.replaceChildren(
       list.length
-        ? ElementGrid(list, { showFolder: !folderId, animate: first, folderOf: getFolder })
+        ? ElementGrid(list, { showFolder: !folderId, animate: first, folderOf: getFolder, select: selectCtx })
         : emptyFor(base)
     );
     first = false;
+    paintSelection();
   }
 
   update();
@@ -140,12 +264,15 @@ export function ElementsView({ folderId = null, virtual = null }) {
       'header',
       { class: 'topbar' },
       back,
+      cancelBtn,
       h('div', { class: 'topbar__text' }, title, sub),
+      selectBtn,
       moreBtn
     ),
-    h('div', { class: 'elements__tools' }, search, pills),
+    h('div', { class: 'elements__tools' }, search, pills, swatches),
     content,
-    fab
+    fab,
+    selbar.node
   );
   return { node, destroy: off };
 }
