@@ -47,7 +47,14 @@ export function ElementCard(el, { folderName = null, select = null } = {}) {
     h(
       'div',
       { class: 'el__preview' + (el.soft ? ' is-soft' : ''), 'data-tone': el.tone || 'light' },
-      h('img', { src: thumbUrl(el), alt: '', loading: 'lazy', draggable: 'false' }),
+      h('img', {
+        src: thumbUrl(el),
+        alt: '',
+        loading: 'lazy',
+        draggable: 'false',
+        class: el.width >= el.height ? 'is-wide' : 'is-tall',
+        style: `aspect-ratio:${el.width || 1}/${el.height || 1}`,
+      }),
       h('span', { class: 'el__done' }, icon('check', 26))
     ),
     h('span', { class: 'el__check', 'aria-hidden': 'true' }, icon('check', 16)),
