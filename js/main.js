@@ -154,6 +154,17 @@ boot();
 
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    navigator.serviceWorker
+      .register('sw.js')
+      .then((reg) => reg.update().catch(() => {}))
+      .catch(() => {});
+  });
+  // A new version took over: reload once so the update shows up on the first open, not the second
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || reloaded) return;
+    reloaded = true;
+    if (!document.querySelector('.overlay')) location.reload();
   });
 }
