@@ -1636,3 +1636,15 @@ body.is-dragging {
   user-select: none;
   cursor: grabbing;
 }
+
+/* fades and soft shadows: show where the picture ends so the gradient is readable */
+.el__preview.is-soft img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  outline: 1.5px dashed color-mix(in srgb, var(--text) 32%, transparent);
+  outline-offset: -1px;
+}

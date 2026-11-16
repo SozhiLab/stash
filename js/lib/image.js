@@ -127,7 +127,7 @@ function traitsFromImage(img) {
   const { w, h } = naturalSize(img);
   const ratio = w / h;
   const shape = ratio >= 1.15 ? 'горизонтальный' : ratio <= 0.87 ? 'вертикальный' : 'квадрат';
-  const traits = { colors: [], transparent: false, shape };
+  const traits = { colors: [], transparent: false, soft: false, shape };
   try {
     const s = Math.min(1, TONE_SAMPLE / Math.max(w, h));
     const canvas = document.createElement('canvas');
@@ -140,16 +140,20 @@ function traitsFromImage(img) {
     const counts = {};
     let solid = 0;
     let clear = 0;
+    let partial = 0;
     for (let i = 0; i < px.length; i += 4) {
       if (px[i + 3] < 48) {
         clear++;
         continue;
       }
+      if (px[i + 3] < 235) partial++;
       solid++;
       const c = colorName(px[i], px[i + 1], px[i + 2]);
       counts[c] = (counts[c] || 0) + 1;
     }
     traits.transparent = clear / total > 0.08;
+    // fades, glows, soft shadows: translucent pixels that are invisible on a flat backdrop
+    traits.soft = (partial + clear) / total > 0.2 && partial / total > 0.04;
     if (solid >= 4) {
       const ranked = Object.entries(counts)
         .map(([name, n]) => [name, n / solid])

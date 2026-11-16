@@ -101,15 +101,20 @@ async function backfillTones() {
 
 // Older elements get a content hash (duplicate check) and colour names (colour filter)
 async function backfillMeta() {
-  const todo = state.elements.filter((e) => !e.hash || !e.colors);
+  const todo = state.elements.filter((e) => !e.hash || !e.colors || e.soft === undefined);
   for (const el of todo) {
     try {
       const blob = await repository.getBlob(el.id);
       if (!el.hash && blob) el.hash = await hashBlob(blob);
-      if (!el.colors) el.colors = colorsOf(await traitsOfBlob(el.thumb || blob));
+      if (!el.colors || el.soft === undefined) {
+        const traits = await traitsOfBlob(el.thumb || blob);
+        if (!el.colors) el.colors = colorsOf(traits);
+        el.soft = !!traits.soft;
+      }
       await repository.saveElement(el);
     } catch (e) {
       if (!el.colors) el.colors = [];
+      if (el.soft === undefined) el.soft = false;
     }
   }
   if (todo.length) notify();
@@ -211,6 +216,7 @@ export async function importElement(meta, source) {
     thumb,
     hash,
     colors: colorsOf(traits),
+    soft: !!traits.soft,
     favorite: !!meta.favorite,
     lastUsedAt: meta.lastUsedAt || null,
     useCount: meta.useCount || 0,
@@ -256,6 +262,7 @@ export async function addElements(items, onProgress) {
         thumb,
         hash,
         colors: colorsOf(traits),
+        soft: !!traits.soft,
         favorite: false,
         lastUsedAt: null,
         useCount: 0,
