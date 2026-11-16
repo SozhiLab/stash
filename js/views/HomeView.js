@@ -8,6 +8,7 @@ import { FolderCard } from '../ui/FolderCard.js';
 import { ElementGrid } from '../ui/ElementCard.js';
 import { EmptyState } from '../ui/EmptyState.js';
 import { SizeSlider, getCols } from '../ui/SizeSlider.js';
+import { InstallBanner } from '../ui/InstallBanner.js';
 import { toast } from '../ui/Toast.js';
 import { FabAdd } from '../ui/FabAdd.js';
 import { enableFolderDrag } from '../ui/folderDrag.js';
@@ -164,6 +165,7 @@ export function HomeView() {
     'section',
     { class: 'view home' },
     h('header', { class: 'head' }, h('div', null, h('h1', { class: 'display' }, 'Штуки'), sub), h('div', { class: 'head__actions' }, bgBtn, settingsBtn)),
+    InstallBanner(),
     search,
     pills,
     slider.node,

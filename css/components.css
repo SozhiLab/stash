@@ -1654,3 +1654,66 @@ body.is-dragging {
   outline: 1.5px dashed color-mix(in srgb, var(--text) 32%, transparent);
   outline-offset: -1px;
 }
+
+/* ---------- "opened in browser" install card ---------- */
+.install {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 8%, transparent);
+}
+.install strong {
+  font-size: 15px;
+  letter-spacing: -0.2px;
+}
+.install p {
+  margin-top: 4px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.install__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.howto {
+  display: grid;
+  gap: 14px;
+}
+.howto__list {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+}
+.howto__step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  line-height: 1.4;
+}
+.howto__n {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--ink-contrast);
+  font-size: 13px;
+  font-weight: 700;
+}
+.howto__note {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
