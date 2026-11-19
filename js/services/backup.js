@@ -1,6 +1,6 @@
 // Backup = a ZIP with the user's files in folders (openable on a computer) plus stash.json
 // with everything needed to restore the library on another device.
-import { state, getBlob, importFolders, importElement, refreshViews } from '../store.js';
+import { state, getBlob, importFolders, removeUntouchedStarterFolders, importElement, refreshViews } from '../store.js';
 import { zipCreate, zipRead } from '../lib/zip.js';
 import { mimeOf } from '../lib/image.js';
 import { getBackgroundState, restoreBackgroundBlob } from './background.js';
@@ -99,6 +99,8 @@ export async function restoreBackup(file, onProgress) {
     throw new Error('not-a-backup');
   }
 
+  // the built-in starter folders would only get in the way of the restored ones
+  if (meta.folders.length) await removeUntouchedStarterFolders();
   const result = { folders: await importFolders(meta.folders), added: 0, skipped: 0, failed: 0 };
   let done = 0;
   for (const m of meta.elements) {

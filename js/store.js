@@ -173,6 +173,19 @@ export async function reorderFolders(ids) {
 }
 
 // ---------- restore from backup ----------
+// Removes the starter folders that were never touched (same name and emoji, still empty),
+// so a restored library is not mixed with the built-in ones.
+export async function removeUntouchedStarterFolders() {
+  const used = new Set(state.elements.map((e) => e.folderId));
+  const isStarter = (f) => DEFAULT_FOLDERS.some((d) => d.name === f.name && d.emoji === f.emoji);
+  const doomed = state.folders.filter((f) => isStarter(f) && !used.has(f.id));
+  for (const f of doomed) await repository.deleteFolder(f.id, []);
+  const gone = new Set(doomed.map((f) => f.id));
+  state.folders = state.folders.filter((f) => !gone.has(f.id));
+  notify();
+  return doomed.length;
+}
+
 // Returns how many folders were created (existing ids are kept untouched)
 export async function importFolders(list) {
   const base = state.folders.length ? Math.max(...state.folders.map((f) => f.order)) + 1 : 0;
