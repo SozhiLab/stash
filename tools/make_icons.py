@@ -65,14 +65,14 @@ def svg(maskable=False):
       <rect x="{cx - 144}" y="314" width="50" height="50" rx="17" fill="{hsl(HUE, 80, 84)}"/>
     </g>
   </g>
-  <g filter="url(#shadow)">
-    <g transform="rotate(8 {cx + 104} 400)">
-      <rect x="{cx + 22}" y="290" width="170" height="140" rx="30" fill="#ffffff"/>
-      <circle cx="{cx + 107}" cy="338" r="26" fill="{hsl(HUE, 85, 91)}"/>
-    </g>
-  </g>
   <g filter="url(#lift)">
     <g fill="#f4f0ff" transform="rotate(-8 {cx + 2} 160)">{flower(cx + 2, 160, 114)}</g>
+  </g>
+  <g filter="url(#lift)">
+    <g transform="rotate(7 {cx + 100} 420)">
+      <rect x="{cx + 0}" y="236" width="196" height="200" rx="34" fill="#ffffff"/>
+      <circle cx="{cx + 98}" cy="306" r="40" fill="{hsl(HUE, 85, 91)}"/>
+    </g>
   </g>
   <rect x="{x0}" y="{top + 112}" width="{x1 - x0}" height="260" rx="{r}" fill="url(#front)"/>
   <rect x="{x0 + 1.5}" y="{top + 113.5}" width="{x1 - x0 - 3}" height="260" rx="{r}" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="3"/>

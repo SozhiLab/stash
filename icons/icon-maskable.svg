@@ -27,14 +27,14 @@
       <rect x="112" y="314" width="50" height="50" rx="17" fill="#d1b6f7"/>
     </g>
   </g>
-  <g filter="url(#shadow)">
-    <g transform="rotate(8 360 400)">
-      <rect x="278" y="290" width="170" height="140" rx="30" fill="#ffffff"/>
-      <circle cx="363" cy="338" r="26" fill="#e5d5fc"/>
-    </g>
-  </g>
   <g filter="url(#lift)">
     <g fill="#f4f0ff" transform="rotate(-8 258 160)"><circle cx="258" cy="160" r="64.7"/><circle cx="258.0" cy="86.5" r="40.5"/><circle cx="194.3" cy="123.2" r="40.5"/><circle cx="194.3" cy="196.8" r="40.5"/><circle cx="258.0" cy="233.5" r="40.5"/><circle cx="321.7" cy="196.8" r="40.5"/><circle cx="321.7" cy="123.2" r="40.5"/></g>
+  </g>
+  <g filter="url(#lift)">
+    <g transform="rotate(7 356 420)">
+      <rect x="256" y="236" width="196" height="200" rx="34" fill="#ffffff"/>
+      <circle cx="354" cy="306" r="40" fill="#e5d5fc"/>
+    </g>
   </g>
   <rect x="64" y="374" width="384" height="260" rx="36" fill="url(#front)"/>
   <rect x="65.5" y="375.5" width="381" height="260" rx="36" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="3"/>
