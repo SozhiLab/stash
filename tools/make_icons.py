@@ -60,13 +60,13 @@ def svg(maskable=False):
   <rect width="512" height="512" fill="url(#bg)"/>
   <path d="{back}" fill="url(#back)"/>
   <g filter="url(#shadow)">
-    <g transform="rotate(-7 {cx - 87} 400)">
-      <rect x="{cx - 172}" y="286" width="170" height="140" rx="30" fill="#ffffff"/>
-      <circle cx="{cx - 87}" cy="334" r="26" fill="{hsl(HUE, 85, 91)}"/>
+    <g transform="rotate(8 {cx + 104} 400)">
+      <rect x="{cx + 22}" y="290" width="170" height="140" rx="30" fill="#ffffff"/>
+      <circle cx="{cx + 107}" cy="338" r="26" fill="{hsl(HUE, 85, 91)}"/>
     </g>
   </g>
   <g filter="url(#lift)">
-    <g fill="#f4f0ff" transform="rotate(12 {cx + 104} 178)">{flower(cx + 104, 178, 112)}</g>
+    <g fill="#f4f0ff" transform="rotate(-8 {cx + 2} 160)">{flower(cx + 2, 160, 114)}</g>
   </g>
   <rect x="{x0}" y="{top + 112}" width="{x1 - x0}" height="260" rx="{r}" fill="url(#front)"/>
   <rect x="{x0 + 1.5}" y="{top + 113.5}" width="{x1 - x0 - 3}" height="260" rx="{r}" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="3"/>

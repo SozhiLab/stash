@@ -22,13 +22,13 @@
   <rect width="512" height="512" fill="url(#bg)"/>
   <path d="M64 620 V284 A22 22 0 0 1 86 262 H203.28 A22 22 0 0 1 225.28 284 V292 H412 A36 36 0 0 1 448 328 V620 Z" fill="url(#back)"/>
   <g filter="url(#shadow)">
-    <g transform="rotate(-7 169 400)">
-      <rect x="84" y="286" width="170" height="140" rx="30" fill="#ffffff"/>
-      <circle cx="169" cy="334" r="26" fill="#e5d5fc"/>
+    <g transform="rotate(8 360 400)">
+      <rect x="278" y="290" width="170" height="140" rx="30" fill="#ffffff"/>
+      <circle cx="363" cy="338" r="26" fill="#e5d5fc"/>
     </g>
   </g>
   <g filter="url(#lift)">
-    <g fill="#f4f0ff" transform="rotate(12 360 178)"><circle cx="360" cy="178" r="63.6"/><circle cx="360.0" cy="105.7" r="39.7"/><circle cx="297.4" cy="141.9" r="39.7"/><circle cx="297.4" cy="214.1" r="39.7"/><circle cx="360.0" cy="250.3" r="39.7"/><circle cx="422.6" cy="214.1" r="39.7"/><circle cx="422.6" cy="141.9" r="39.7"/></g>
+    <g fill="#f4f0ff" transform="rotate(-8 258 160)"><circle cx="258" cy="160" r="64.7"/><circle cx="258.0" cy="86.5" r="40.5"/><circle cx="194.3" cy="123.2" r="40.5"/><circle cx="194.3" cy="196.8" r="40.5"/><circle cx="258.0" cy="233.5" r="40.5"/><circle cx="321.7" cy="196.8" r="40.5"/><circle cx="321.7" cy="123.2" r="40.5"/></g>
   </g>
   <rect x="64" y="374" width="384" height="260" rx="36" fill="url(#front)"/>
   <rect x="65.5" y="375.5" width="381" height="260" rx="36" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="3"/>
