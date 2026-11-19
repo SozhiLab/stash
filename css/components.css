@@ -1733,11 +1733,13 @@ p,
 
 /* ---------- glass controls: filter pills and header buttons ---------- */
 :root {
-  --glass-1: rgba(255, 255, 255, 0.5);
-  --glass-2: rgba(255, 255, 255, 0.1);
-  --glass-edge: rgba(255, 255, 255, 0.8);
-  --glass-ring: rgba(28, 30, 70, 0.07);
-  --glass-shadow: rgba(28, 30, 70, 0.22);
+  --glass-1: rgba(255, 255, 255, 0.34);
+  --glass-2: rgba(255, 255, 255, 0.05);
+  --glass-edge: rgba(255, 255, 255, 0.95);
+  --glass-ring: rgba(255, 255, 255, 0.35);
+  --glass-edge-soft: rgba(255, 255, 255, 0.55);
+  --glass-inner: rgba(255, 255, 255, 0.18);
+  --glass-shadow: rgba(28, 30, 70, 0.18);
   --glass-ink-1: rgba(14, 14, 24, 0.84);
   --glass-ink-2: rgba(14, 14, 24, 0.66);
 }
@@ -1746,7 +1748,9 @@ p,
     --glass-1: rgba(255, 255, 255, 0.16);
     --glass-2: rgba(255, 255, 255, 0.04);
     --glass-edge: rgba(255, 255, 255, 0.34);
-    --glass-ring: rgba(255, 255, 255, 0.06);
+    --glass-ring: rgba(255, 255, 255, 0.1);
+    --glass-edge-soft: rgba(255, 255, 255, 0.16);
+    --glass-inner: rgba(255, 255, 255, 0.05);
     --glass-shadow: rgba(0, 0, 0, 0.5);
     --glass-ink-1: rgba(244, 242, 235, 0.86);
     --glass-ink-2: rgba(244, 242, 235, 0.68);
@@ -1756,7 +1760,9 @@ p,
   --glass-1: rgba(255, 255, 255, 0.16);
   --glass-2: rgba(255, 255, 255, 0.04);
   --glass-edge: rgba(255, 255, 255, 0.34);
-  --glass-ring: rgba(255, 255, 255, 0.06);
+  --glass-ring: rgba(255, 255, 255, 0.1);
+  --glass-edge-soft: rgba(255, 255, 255, 0.16);
+  --glass-inner: rgba(255, 255, 255, 0.05);
   --glass-shadow: rgba(0, 0, 0, 0.5);
   --glass-ink-1: rgba(244, 242, 235, 0.86);
   --glass-ink-2: rgba(244, 242, 235, 0.68);
@@ -1765,23 +1771,28 @@ p,
 .pill,
 .head__actions .icon-btn,
 .topbar .icon-btn {
+  /* clear glass: almost no fill, blurred backdrop, bright bevel on the lit corners */
   background: rgba(255, 255, 255, 0.2);
-  background: linear-gradient(150deg, var(--glass-1), var(--glass-2));
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
-  border: 1px solid var(--glass-edge);
-  /* bright rim on the top edge, a faint hairline outside, soft neutral shadow */
-  box-shadow: inset 0 1px 1px var(--glass-edge), inset 0 -5px 10px -7px var(--glass-edge), 0 0 0 0.5px var(--glass-ring),
-    0 8px 18px -12px var(--glass-shadow);
+  background: linear-gradient(135deg, var(--glass-1), var(--glass-2) 55%, var(--glass-1));
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-ring);
+  box-shadow: inset 1.5px 1.5px 2px -0.5px var(--glass-edge), inset -1.5px -1.5px 2px -0.5px var(--glass-edge-soft),
+    inset 0 0 12px var(--glass-inner), 0 6px 16px -10px var(--glass-shadow);
 }
 .pill:hover,
 .head__actions .icon-btn:hover,
 .topbar .icon-btn:hover {
-  background: linear-gradient(150deg, var(--glass-1), var(--glass-1));
+  background: linear-gradient(135deg, var(--glass-1), var(--glass-1));
 }
-.pill.is-active {
-  background: linear-gradient(150deg, var(--glass-ink-1), var(--glass-ink-2));
-  box-shadow: inset 0 1px 1px var(--glass-edge), 0 0 0 0.5px var(--glass-ring), 0 10px 20px -12px var(--glass-shadow);
+/* the selected pill is flat and solid, no glass */
+.pill.is-active,
+.pill.is-active:hover {
+  background: var(--ink);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-color: transparent;
+  box-shadow: none;
 }
 .pills {
   /* room for the glass shadows, which a scrolling row would otherwise cut off */
