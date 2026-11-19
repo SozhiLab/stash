@@ -30,7 +30,7 @@
   <g filter="url(#lift)">
     <g transform="rotate(13 347 190)">
       <rect x="262" y="92" width="170" height="196" rx="30" fill="#f4f0ff"/>
-      <rect x="312" y="140" width="70" height="70" rx="22" fill="#d1b6f7"/>
+      <g fill="#d1b6f7"><circle cx="347" cy="170" r="28.4"/><circle cx="347.0" cy="137.7" r="17.7"/><circle cx="319.1" cy="153.9" r="17.7"/><circle cx="319.1" cy="186.1" r="17.7"/><circle cx="347.0" cy="202.3" r="17.7"/><circle cx="374.9" cy="186.1" r="17.7"/><circle cx="374.9" cy="153.9" r="17.7"/></g>
       <rect x="294" y="232" width="106" height="14" rx="7" fill="#e2d1fa"/>
     </g>
   </g>

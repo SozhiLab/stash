@@ -12,6 +12,18 @@ def hsl(h, s, l):
     return '#%02x%02x%02x' % (round(r * 255), round(g * 255), round(b * 255))
 
 
+def flower(x, y, big):
+    """Six round petals (top, bottom and four on the sides) around a filled centre."""
+    import math
+    d = big / 1.55
+    r = 0.55 * d
+    parts = [f'<circle cx="{x}" cy="{y}" r="{d * 0.88:.1f}"/>']
+    for ang in (90, 150, 210, 270, 330, 30):
+        a = math.radians(ang)
+        parts.append(f'<circle cx="{x + d * math.cos(a):.1f}" cy="{y - d * math.sin(a):.1f}" r="{r:.1f}"/>')
+    return ''.join(parts)
+
+
 def svg(maskable=False):
     # Only the top half of the folder rises from the bottom edge; the paper cards pop out above it.
     x0, x1 = (64, 448) if maskable else (30, 482)
@@ -56,7 +68,7 @@ def svg(maskable=False):
   <g filter="url(#lift)">
     <g transform="rotate(13 {cx + 91} 190)">
       <rect x="{cx + 6}" y="92" width="170" height="196" rx="30" fill="#f4f0ff"/>
-      <rect x="{cx + 56}" y="140" width="70" height="70" rx="22" fill="{hsl(HUE, 80, 84)}"/>
+      <g fill="{hsl(HUE, 80, 84)}">{flower(cx + 91, 170, 50)}</g>
       <rect x="{cx + 38}" y="232" width="106" height="14" rx="7" fill="{hsl(HUE, 80, 90)}"/>
     </g>
   </g>
