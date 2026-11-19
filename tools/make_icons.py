@@ -23,7 +23,7 @@ def svg(maskable=False):
         f'M{x0} 620 V{top + 22} A22 22 0 0 1 {x0 + 22} {top} H{tab_r - 22} '
         f'A22 22 0 0 1 {tab_r} {top + 22} V{body} H{x1 - r} A{r} {r} 0 0 1 {x1} {body + r} V620 Z'
     )
-    cx = 256 if maskable else 276
+    cx = 256
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -35,8 +35,8 @@ def svg(maskable=False):
       <stop offset="1" stop-color="{hsl(HUE, 62, 62)}"/>
     </linearGradient>
     <linearGradient id="front" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="{hsl(HUE, 90, 96)}" stop-opacity="0.55"/>
-      <stop offset="1" stop-color="{hsl(HUE, 70, 84)}" stop-opacity="0.30"/>
+      <stop offset="0" stop-color="{hsl(HUE, 85, 90)}" stop-opacity="0.93"/>
+      <stop offset="1" stop-color="{hsl(HUE, 70, 76)}" stop-opacity="0.86"/>
     </linearGradient>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
       <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity="0.35"/>
@@ -45,8 +45,14 @@ def svg(maskable=False):
   <rect width="512" height="512" fill="url(#bg)"/>
   <path d="{back}" fill="url(#back)"/>
   <g filter="url(#shadow)">
-    <g transform="rotate(-8 {cx - 72} 230)"><rect x="{cx - 160}" y="98" width="176" height="196" rx="24" fill="#ffffff"/></g>
-    <g transform="rotate(7 {cx + 76} 230)"><rect x="{cx - 12}" y="72" width="176" height="196" rx="24" fill="#f1ecff"/></g>
+    <g transform="rotate(-8 {cx - 86} 366)">
+      <rect x="{cx - 172}" y="196" width="170" height="214" rx="30" fill="#ffffff"/>
+      <circle cx="{cx - 87}" cy="260" r="34" fill="{hsl(HUE, 85, 91)}"/>
+    </g>
+    <g transform="rotate(7 {cx + 86} 366)">
+      <rect x="{cx + 2}" y="172" width="170" height="236" rx="30" fill="#f4f0ff"/>
+      <rect x="{cx + 52}" y="222" width="70" height="70" rx="22" fill="{hsl(HUE, 80, 87)}"/>
+    </g>
   </g>
   <rect x="{x0}" y="{top + 112}" width="{x1 - x0}" height="260" rx="{r}" fill="url(#front)"/>
   <rect x="{x0 + 1.5}" y="{top + 113.5}" width="{x1 - x0 - 3}" height="260" rx="{r}" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="3"/>
