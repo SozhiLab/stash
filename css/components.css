@@ -1736,34 +1736,38 @@ p,
 .head__actions .icon-btn,
 .topbar .icon-btn {
   background: linear-gradient(
-    160deg,
-    color-mix(in srgb, var(--surface) 82%, transparent),
-    color-mix(in srgb, var(--surface) 36%, transparent)
+    150deg,
+    color-mix(in srgb, var(--surface) 34%, transparent),
+    color-mix(in srgb, var(--surface) 8%, transparent)
   );
-  -webkit-backdrop-filter: blur(16px) saturate(1.7);
-  backdrop-filter: blur(16px) saturate(1.7);
-  border: 1px solid var(--front-edge);
-  box-shadow: inset 0 1px 0 var(--front-edge), inset 0 -1px 0 color-mix(in srgb, var(--text) 5%, transparent),
-    0 8px 18px -10px color-mix(in srgb, var(--text) 38%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.9) brightness(1.04);
+  backdrop-filter: blur(20px) saturate(1.9) brightness(1.04);
+  border: 1px solid color-mix(in srgb, #fff 55%, transparent);
+  /* light rim along the top edge, soft glow around the contour, faint lilac bloom */
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.85), inset 0 -6px 12px -8px rgba(255, 255, 255, 0.35),
+    0 0 0 0.5px color-mix(in srgb, hsl(265 90% 78%) 45%, transparent),
+    0 0 16px -2px color-mix(in srgb, hsl(265 90% 78%) 38%, transparent),
+    0 8px 20px -12px color-mix(in srgb, var(--text) 45%, transparent);
 }
 .pill:hover,
 .head__actions .icon-btn:hover,
 .topbar .icon-btn:hover {
   background: linear-gradient(
-    160deg,
-    color-mix(in srgb, var(--surface) 92%, transparent),
-    color-mix(in srgb, var(--surface) 50%, transparent)
+    150deg,
+    color-mix(in srgb, var(--surface) 46%, transparent),
+    color-mix(in srgb, var(--surface) 16%, transparent)
   );
 }
 .pill.is-active {
   background: linear-gradient(
-    160deg,
-    color-mix(in srgb, var(--ink) 94%, transparent),
-    color-mix(in srgb, var(--ink) 76%, transparent)
+    150deg,
+    color-mix(in srgb, var(--ink) 82%, transparent),
+    color-mix(in srgb, var(--ink) 58%, transparent)
   );
-  border-color: color-mix(in srgb, var(--ink-contrast) 28%, transparent);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink-contrast) 30%, transparent),
-    0 10px 20px -10px color-mix(in srgb, var(--ink) 70%, transparent);
+  border-color: color-mix(in srgb, #fff 40%, transparent);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45), 0 0 0 0.5px color-mix(in srgb, hsl(265 90% 78%) 50%, transparent),
+    0 0 16px -2px color-mix(in srgb, hsl(265 90% 78%) 34%, transparent),
+    0 10px 20px -12px color-mix(in srgb, var(--ink) 70%, transparent);
 }
 .pills {
   /* room for the glass shadows, which a scrolling row would otherwise cut off */
