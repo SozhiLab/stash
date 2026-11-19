@@ -41,17 +41,23 @@ def svg(maskable=False):
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
       <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity="0.35"/>
     </filter>
+    <filter id="lift" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="22" stdDeviation="14" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
   </defs>
   <rect width="512" height="512" fill="url(#bg)"/>
   <path d="{back}" fill="url(#back)"/>
   <g filter="url(#shadow)">
-    <g transform="rotate(-8 {cx - 86} 366)">
-      <rect x="{cx - 172}" y="196" width="170" height="214" rx="30" fill="#ffffff"/>
-      <circle cx="{cx - 87}" cy="260" r="34" fill="{hsl(HUE, 85, 91)}"/>
+    <g transform="rotate(-7 {cx - 87} 400)">
+      <rect x="{cx - 172}" y="286" width="170" height="140" rx="30" fill="#ffffff"/>
+      <circle cx="{cx - 87}" cy="334" r="26" fill="{hsl(HUE, 85, 91)}"/>
     </g>
-    <g transform="rotate(7 {cx + 86} 366)">
-      <rect x="{cx + 2}" y="172" width="170" height="236" rx="30" fill="#f4f0ff"/>
-      <rect x="{cx + 52}" y="222" width="70" height="70" rx="22" fill="{hsl(HUE, 80, 87)}"/>
+  </g>
+  <g filter="url(#lift)">
+    <g transform="rotate(13 {cx + 91} 190)">
+      <rect x="{cx + 6}" y="92" width="170" height="196" rx="30" fill="#f4f0ff"/>
+      <rect x="{cx + 56}" y="140" width="70" height="70" rx="22" fill="{hsl(HUE, 80, 84)}"/>
+      <rect x="{cx + 38}" y="232" width="106" height="14" rx="7" fill="{hsl(HUE, 80, 90)}"/>
     </g>
   </g>
   <rect x="{x0}" y="{top + 112}" width="{x1 - x0}" height="260" rx="{r}" fill="url(#front)"/>

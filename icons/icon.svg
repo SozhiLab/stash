@@ -15,17 +15,23 @@
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
       <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity="0.35"/>
     </filter>
+    <filter id="lift" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="22" stdDeviation="14" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
   </defs>
   <rect width="512" height="512" fill="url(#bg)"/>
   <path d="M30 620 V284 A22 22 0 0 1 52 262 H197.84 A22 22 0 0 1 219.84 284 V292 H446 A36 36 0 0 1 482 328 V620 Z" fill="url(#back)"/>
   <g filter="url(#shadow)">
-    <g transform="rotate(-8 170 366)">
-      <rect x="84" y="196" width="170" height="214" rx="30" fill="#ffffff"/>
-      <circle cx="169" cy="260" r="34" fill="#e5d5fc"/>
+    <g transform="rotate(-7 169 400)">
+      <rect x="84" y="286" width="170" height="140" rx="30" fill="#ffffff"/>
+      <circle cx="169" cy="334" r="26" fill="#e5d5fc"/>
     </g>
-    <g transform="rotate(7 342 366)">
-      <rect x="258" y="172" width="170" height="236" rx="30" fill="#f4f0ff"/>
-      <rect x="308" y="222" width="70" height="70" rx="22" fill="#d9c3f8"/>
+  </g>
+  <g filter="url(#lift)">
+    <g transform="rotate(13 347 190)">
+      <rect x="262" y="92" width="170" height="196" rx="30" fill="#f4f0ff"/>
+      <rect x="312" y="140" width="70" height="70" rx="22" fill="#d1b6f7"/>
+      <rect x="294" y="232" width="106" height="14" rx="7" fill="#e2d1fa"/>
     </g>
   </g>
   <rect x="30" y="374" width="452" height="260" rx="36" fill="url(#front)"/>
