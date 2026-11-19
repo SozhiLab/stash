@@ -1171,7 +1171,7 @@
 }
 .folder__art {
   max-width: 340px;
-  margin-bottom: clamp(6px, 6cqw, 12px);
+  margin-bottom: clamp(11px, 9cqw, 20px);
 }
 .folder__more {
   right: max(0px, calc(50% - 170px));
