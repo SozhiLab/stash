@@ -22,6 +22,12 @@
   <rect width="512" height="512" fill="url(#bg)"/>
   <path d="M30 620 V284 A22 22 0 0 1 52 262 H197.84 A22 22 0 0 1 219.84 284 V292 H446 A36 36 0 0 1 482 328 V620 Z" fill="url(#back)"/>
   <g filter="url(#shadow)">
+    <g transform="rotate(-9 138 400)">
+      <rect x="52" y="288" width="170" height="140" rx="30" fill="#f7f4ff"/>
+      <rect x="112" y="314" width="50" height="50" rx="17" fill="#d1b6f7"/>
+    </g>
+  </g>
+  <g filter="url(#shadow)">
     <g transform="rotate(8 360 400)">
       <rect x="278" y="290" width="170" height="140" rx="30" fill="#ffffff"/>
       <circle cx="363" cy="338" r="26" fill="#e5d5fc"/>

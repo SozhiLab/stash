@@ -60,6 +60,12 @@ def svg(maskable=False):
   <rect width="512" height="512" fill="url(#bg)"/>
   <path d="{back}" fill="url(#back)"/>
   <g filter="url(#shadow)">
+    <g transform="rotate(-9 {cx - 118} 400)">
+      <rect x="{cx - 204}" y="288" width="170" height="140" rx="30" fill="#f7f4ff"/>
+      <rect x="{cx - 144}" y="314" width="50" height="50" rx="17" fill="{hsl(HUE, 80, 84)}"/>
+    </g>
+  </g>
+  <g filter="url(#shadow)">
     <g transform="rotate(8 {cx + 104} 400)">
       <rect x="{cx + 22}" y="290" width="170" height="140" rx="30" fill="#ffffff"/>
       <circle cx="{cx + 107}" cy="338" r="26" fill="{hsl(HUE, 85, 91)}"/>
