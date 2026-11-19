@@ -66,7 +66,7 @@ def svg(maskable=False):
     </g>
   </g>
   <g filter="url(#lift)">
-    <g fill="#f4f0ff" transform="rotate(-8 {cx + 2} 160)">{flower(cx + 2, 160, 114)}</g>
+    <g fill="#f4f0ff" transform="rotate(-8 {cx + 2} 184)">{flower(cx + 2, 184, 114)}</g>
   </g>
   <g filter="url(#lift)">
     <g transform="rotate(7 {cx + 100} 420)">
