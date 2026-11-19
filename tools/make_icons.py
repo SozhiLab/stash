@@ -66,11 +66,7 @@ def svg(maskable=False):
     </g>
   </g>
   <g filter="url(#lift)">
-    <g transform="rotate(13 {cx + 91} 190)">
-      <rect x="{cx + 6}" y="92" width="170" height="196" rx="30" fill="#f4f0ff"/>
-      <g fill="{hsl(HUE, 80, 84)}">{flower(cx + 91, 170, 50)}</g>
-      <rect x="{cx + 38}" y="232" width="106" height="14" rx="7" fill="{hsl(HUE, 80, 90)}"/>
-    </g>
+    <g fill="#f4f0ff" transform="rotate(12 {cx + 104} 178)">{flower(cx + 104, 178, 112)}</g>
   </g>
   <rect x="{x0}" y="{top + 112}" width="{x1 - x0}" height="260" rx="{r}" fill="url(#front)"/>
   <rect x="{x0 + 1.5}" y="{top + 113.5}" width="{x1 - x0 - 3}" height="260" rx="{r}" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="3"/>
