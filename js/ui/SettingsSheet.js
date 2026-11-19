@@ -173,7 +173,7 @@ export function openSettingsSheet() {
     settingsGroup('Элементы', [order, autotags, retag.node]),
     settingsGroup('Данные', [backup.node, storageBlock()]),
     settingsGroup('Сброс', [reset.node]),
-    h('p', { class: 'set-foot' }, 'Штуки. Всё хранится только на этом устройстве.')
+    h('p', { class: 'set-foot' }, 'Штучки. Всё хранится только на этом устройстве.')
   );
   openSheet({ title: 'Настройки', body, size: 'md' });
 }

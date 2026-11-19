@@ -1659,7 +1659,8 @@ body.is-dragging {
 .install {
   display: grid;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-top: calc(12px + env(safe-area-inset-top, 0px));
+  margin-bottom: -10px;
   padding: 16px;
   border-radius: 20px;
   background: var(--surface-2);
@@ -1716,4 +1717,16 @@ body.is-dragging {
   font-size: 13.5px;
   line-height: 1.45;
   color: var(--text-2);
+}
+
+/* nicer line breaks: no one-letter words left dangling at the end of a line */
+p,
+.sheet__title,
+.sheet__text,
+.howto__step,
+.toast,
+.field__hint,
+.set-foot,
+.empty p {
+  text-wrap: pretty;
 }

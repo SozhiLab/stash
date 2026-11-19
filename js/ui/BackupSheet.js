@@ -119,7 +119,7 @@ export function openBackupSheet() {
       toast(r.added ? 'Копия восстановлена' : 'Новых элементов нет', { icon: r.added ? 'check' : 'clock' });
     } catch (e) {
       console.warn('Restore failed', e);
-      toast(e && e.message === 'not-a-backup' ? 'Это не файл копии «Штуки»' : 'Не удалось прочитать файл', {
+      toast(e && e.message === 'not-a-backup' ? 'Это не файл копии «Штучки»' : 'Не удалось прочитать файл', {
         tone: 'error',
         icon: 'close',
       });

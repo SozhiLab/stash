@@ -29,7 +29,7 @@ function uniqueName(used, base, ext = '') {
 
 export function backupFileName(d = new Date()) {
   const p = (n) => String(n).padStart(2, '0');
-  return `shtuki-backup-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.zip`;
+  return `shtuchki-backup-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.zip`;
 }
 
 export async function createBackup(onProgress) {

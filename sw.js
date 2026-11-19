@@ -1,10 +1,13 @@
 // Offline shell cache. Bump VERSION when files change.
-const VERSION = 'stash-v16';
+const VERSION = 'stash-v17';
 const SHELL = [
   './',
   'index.html',
   'manifest.webmanifest',
   'icons/icon.svg',
+  'icons/icon-192.png',
+  'icons/icon-512.png',
+  'icons/apple-touch-icon.png',
   'css/tokens.css',
   'css/base.css',
   'css/layout.css',
@@ -38,6 +41,7 @@ const SHELL = [
   'js/ui/BackgroundSheet.js',
   'js/lib/zip.js',
   'js/logic/sort.js',
+  'js/lib/typo.js',
   'js/logic/colors.js',
   'js/lib/hash.js',
   'js/ui/BatchSheets.js',

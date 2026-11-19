@@ -145,7 +145,7 @@ export function HomeView() {
   try {
     if (state.folders.length > 1 && !localStorage.getItem('stash:dragHint')) {
       localStorage.setItem('stash:dragHint', '1');
-      setTimeout(() => toast('Удерживайте папку и перетащите, чтобы поменять порядок', { icon: 'folder', duration: 4200 }), 1200);
+      setTimeout(() => !document.querySelector('.install') && toast('Удерживайте папку и перетащите, чтобы поменять порядок', { icon: 'folder', duration: 4200 }), 1200);
     }
   } catch (e) {
     /* storage unavailable */
@@ -164,8 +164,8 @@ export function HomeView() {
   const node = h(
     'section',
     { class: 'view home' },
-    h('header', { class: 'head' }, h('div', null, h('h1', { class: 'display' }, 'Штуки'), sub), h('div', { class: 'head__actions' }, bgBtn, settingsBtn)),
     InstallBanner(),
+    h('header', { class: 'head' }, h('div', null, h('h1', { class: 'display' }, 'Штучки'), sub), h('div', { class: 'head__actions' }, bgBtn, settingsBtn)),
     search,
     pills,
     slider.node,

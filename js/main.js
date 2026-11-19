@@ -10,8 +10,10 @@ import { toast } from './ui/Toast.js';
 import { detectKind } from './lib/image.js';
 import { initBackground } from './services/background.js';
 import { applyTheme } from './services/theme.js';
+import { startTypography } from './lib/typo.js';
 
 applyTheme();
+startTypography();
 const app = document.getElementById('app');
 let current = null;
 let currentKey = null;
@@ -140,7 +142,7 @@ async function boot() {
         'div',
         { class: 'boot-error' },
         h('h1', { class: 'display' }, 'Не удалось открыть хранилище'),
-        h('p', null, 'Браузер запретил локальное хранилище (возможно, включён приватный режим). Откройте «Штуки» в обычном окне.')
+        h('p', null, 'Браузер запретил локальное хранилище (возможно, включён приватный режим). Откройте «Штучки» в обычном окне.')
       )
     );
     return;
