@@ -92,9 +92,21 @@ function iosScenes() {
         { class: 'demo__toolbar' },
         h('span', null, '‹'),
         h('span', null, '›'),
-        h('span', { class: 'is-target' }, icon('share', 20), tap()),
+        h('span', { class: 'is-target demo__more' }, '•••', tap()),
         h('span', { class: 'demo__book' }),
         h('span', { class: 'demo__tabs' })
+      )
+    ),
+    h(
+      'div',
+      { class: 'demo__scene' },
+      pageMock(),
+      h(
+        'div',
+        { class: 'demo__menu demo__menu--ios' },
+        h('div', { class: 'demo__row' }, 'Закладки'),
+        h('div', { class: 'demo__row is-target' }, 'Поделиться', icon('share', 16), tap()),
+        h('div', { class: 'demo__row' }, 'Найти на странице')
       )
     ),
     h(
@@ -199,12 +211,27 @@ function HowToDemo(steps, scenes) {
   return { node, stop: () => clearInterval(timer), go };
 }
 
-export function openHowTo() {
-  const p = platform();
+export function openHowTo(initial) {
+  let p = initial || platform();
+  if (p === 'other') p = 'ios';
+  let demo = null;
+  const content = h('div', { class: 'howto__content' });
+  const seg = h('div', { class: 'seg', role: 'tablist' });
+  const render = () => {
+    if (demo) demo.stop();
+    seg.replaceChildren(
+      ...[['ios', 'iPhone'], ['android', 'Android']].map(([k, label]) =>
+        h('button', { class: 'seg__btn' + (k === p ? ' is-active' : ''), type: 'button', role: 'tab', onClick: () => { p = k; render(); } }, label)
+      )
+    );
+    content.replaceChildren(buildHowTo(p));
+  };
+  const buildHowTo = (p) => {
   const steps =
     p === 'ios'
       ? [
-          'Нажмите «Поделиться» внизу экрана Safari.',
+          'Нажмите три точки «•••» в нижней панели Safari.',
+          'Выберите «Поделиться».',
           'Выберите «На экран «Домой»».',
           'Нажмите «Добавить» в правом верхнем углу.',
           'Открывайте Штучки с нового значка на экране.',
@@ -215,11 +242,11 @@ export function openHowTo() {
           'Подтвердите установку.',
           'Открывайте Штучки с нового значка на экране.',
         ];
-  const demo = HowToDemo(steps, p === 'ios' ? iosScenes() : androidScenes());
-  const body = h(
+  demo = HowToDemo(steps, p === 'ios' ? iosScenes() : androidScenes());
+  return h(
     'div',
-    { class: 'howto' },
-    installEvent
+    null,
+    installEvent && p === 'android'
       ? h(
           'button',
           {
@@ -262,7 +289,10 @@ export function openHowTo() {
       'Сделать резервную копию'
     )
   );
-  const sheet = openSheet({ title: 'Добавить на экран «Домой»', body, size: 'md', onClose: demo.stop });
+  };
+  const body = h('div', { class: 'howto' }, seg, content);
+  render();
+  const sheet = openSheet({ title: 'Добавить на экран «Домой»', body, size: 'md', onClose: () => demo && demo.stop() });
   return sheet;
 }
 
@@ -272,6 +302,9 @@ function showPopup() {
     writeKey(POPUP_DONE_KEY, '1');
     layer.classList.remove('is-in');
     setTimeout(() => layer.remove(), 320);
+    const home = document.querySelector('.view.home');
+    const banner = home && !home.querySelector('.install') ? InstallBanner() : null;
+    if (banner) home.prepend(banner);
     if (andThen) andThen();
   };
   const layer = h(
