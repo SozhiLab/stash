@@ -54,13 +54,24 @@ function copyDemo() {
   return h(
     'div',
     { class: 'cdemo', 'aria-hidden': 'true' },
-    h('div', { class: 'cdemo__toast' }, icon('check', 14), 'Скопировано'),
     h(
       'div',
-      { class: 'cdemo__row' },
-      h('span', { class: 'cdemo__tile is-b' }, h('i'), h('span', { class: 'cdemo__tap' }))
+      { class: 'cdemo__scene is-lib' },
+      h('span', { class: 'cdemo__label' }, 'Штучки'),
+      h('div', { class: 'cdemo__toast' }, icon('check', 14), 'Скопировано'),
+      h('span', { class: 'cdemo__tile' }, h('i'), h('span', { class: 'cdemo__tap' }))
     ),
-    h('div', { class: 'cdemo__paste' }, h('span', null, 'Ваш монтаж'), h('span', { class: 'cdemo__drop' }))
+    h(
+      'div',
+      { class: 'cdemo__scene is-app' },
+      h('div', { class: 'cdemo__bar' }, h('span', null, 'Редактор'), h('em', null, '•••')),
+      h(
+        'div',
+        { class: 'cdemo__canvas' },
+        h('span', { class: 'cdemo__placed' }),
+        h('div', { class: 'cdemo__bubble' }, 'Вставить', h('span', { class: 'cdemo__tap cdemo__tap--app' }))
+      )
+    )
   );
 }
 
