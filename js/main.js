@@ -12,6 +12,7 @@ import { initBackground } from './services/background.js';
 import { applyTheme } from './services/theme.js';
 import { startTypography } from './lib/typo.js';
 import { startInstallPrompt } from './ui/InstallBanner.js';
+import { startOnboarding } from './ui/Tour.js';
 
 applyTheme();
 startTypography();
@@ -150,6 +151,7 @@ async function boot() {
   }
   window.addEventListener('hashchange', showRoute);
   showRoute();
+  startOnboarding();
   startInstallPrompt();
   initBackground().catch((e) => console.warn('Background failed', e));
 }

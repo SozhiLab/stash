@@ -9,6 +9,7 @@ import { ElementGrid } from '../ui/ElementCard.js';
 import { EmptyState } from '../ui/EmptyState.js';
 import { SizeSlider, getCols } from '../ui/SizeSlider.js';
 import { InstallBanner } from '../ui/InstallBanner.js';
+import { tourDone } from '../ui/Tour.js';
 import { toast } from '../ui/Toast.js';
 import { FabAdd } from '../ui/FabAdd.js';
 import { enableFolderDrag } from '../ui/folderDrag.js';
@@ -143,7 +144,7 @@ export function HomeView() {
   update();
   const off = subscribe(update);
   try {
-    if (state.folders.length > 1 && !localStorage.getItem('stash:dragHint')) {
+    if (tourDone() && state.folders.length > 1 && !localStorage.getItem('stash:dragHint')) {
       localStorage.setItem('stash:dragHint', '1');
       setTimeout(() => !document.querySelector('.install') && toast('Удерживайте папку и перетащите, чтобы поменять порядок', { icon: 'folder', duration: 4200 }), 1200);
     }

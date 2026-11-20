@@ -4,6 +4,7 @@ import { h } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { openSheet } from './BottomSheet.js';
 import { state } from '../store.js';
+import { tourDone } from './Tour.js';
 import { openBackupSheet } from './BackupSheet.js';
 
 const SNOOZE_KEY = 'stash:installSnooze';
@@ -351,6 +352,7 @@ const ACTIVE_KEY = 'stash:activeSec';
 const ready = () => {
   const visits = Number(readKey(VISITS_KEY) || 0);
   const active = Number(readKey(ACTIVE_KEY) || 0);
+  if (!tourDone()) return false;
   const has = state.elements.length > 0;
   return (has && (active >= 120 || visits >= 2)) || (visits >= 3 && active >= 60);
 };

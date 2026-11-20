@@ -1900,3 +1900,27 @@ p,
 .howto__b{flex:1;height:46px;border-radius:999px;justify-content:center;gap:6px;font-size:14px;line-height:1.1}
 .howto__ok{margin:0;padding:14px;border-radius:16px;background:var(--pill);font-size:14px;line-height:1.35}
 .howto__b{white-space:nowrap}
+
+/* ---------- first-run tour ---------- */
+.tour{position:fixed;inset:0;z-index:95;opacity:0;transition:opacity .3s}
+.tour.is-in{opacity:1}
+.tour__hole{position:fixed;border-radius:22px;box-shadow:0 0 0 100vmax rgba(10,10,14,.58);outline:2px solid rgba(255,255,255,.9);transition:left .45s cubic-bezier(.3,.8,.3,1),top .45s cubic-bezier(.3,.8,.3,1),width .45s cubic-bezier(.3,.8,.3,1),height .45s cubic-bezier(.3,.8,.3,1),opacity .3s;pointer-events:none;animation:tourPulse 1.8s ease-in-out infinite}
+.tour.is-center::before{content:"";position:fixed;inset:0;background:rgba(10,10,14,.58);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+@keyframes tourPulse{0%,100%{outline-offset:0;outline-color:rgba(255,255,255,.95)}50%{outline-offset:6px;outline-color:rgba(255,255,255,.25)}}
+.tour__card{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));max-width:440px;margin:0 auto;padding:20px 18px 16px;border-radius:28px;background:var(--surface);color:var(--text);box-shadow:0 20px 60px rgba(0,0,0,.3);transition:top .3s,bottom .3s}
+.tour__card.is-top{bottom:auto;top:calc(12px + env(safe-area-inset-top))}
+.tour__card.is-swap{animation:capIn .35s both}
+.tour__art{display:flex;justify-content:center;margin-bottom:10px}
+.tour__art img{width:72px;height:72px;border-radius:18px;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+.tour__art svg{padding:10px;box-sizing:content-box;border-radius:50%;background:var(--pill)}
+.tour__count{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-2)}
+.tour__title{margin:4px 0 6px;font-size:20px;line-height:1.2;font-weight:800}
+.tour__text{margin:0 0 14px;font-size:15px;line-height:1.4;color:var(--text-2)}
+.tour__dots{display:flex;gap:5px;margin-bottom:14px}
+.tour__dots span{width:7px;height:7px;border-radius:99px;background:var(--pill);transition:width .25s,background .25s}
+.tour__dots span.is-active{width:20px;background:var(--ink)}
+.tour__actions{display:flex;gap:10px}
+.tour__actions .btn{flex:1;height:48px;border-radius:999px;font-weight:700;justify-content:center;line-height:1.1}
+.tour__later{background:transparent;border:1.5px solid var(--text-2);color:var(--text)}
+.tour__next{background:var(--ink);color:var(--ink-contrast);border:0}
+@media (prefers-reduced-motion:reduce){.tour__hole{animation:none}}

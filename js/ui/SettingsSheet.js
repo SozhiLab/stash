@@ -1,7 +1,8 @@
 // Settings: appearance, item order, backup, storage, reset.
 import { h } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
-import { openSheet, confirmSheet } from './BottomSheet.js';
+import { openSheet, confirmSheet, closeTopOverlay } from './BottomSheet.js';
+import { startTour } from './Tour.js';
 import { openBackgroundSheet } from './BackgroundSheet.js';
 import { openBackupSheet } from './BackupSheet.js';
 import { Segmented } from './Segmented.js';
@@ -148,6 +149,16 @@ export function openSettingsSheet() {
     onClick: () => openBackupSheet(),
   });
 
+  const tour = settingsRow({
+    iconName: 'eye',
+    title: 'Обучение',
+    hint: 'Показать, как пользоваться приложением',
+    onClick: () => {
+      closeTopOverlay();
+      setTimeout(startTour, 350);
+    },
+  });
+
   const reset = settingsRow({
     iconName: 'trash',
     title: 'Стереть все данные',
@@ -172,6 +183,7 @@ export function openSettingsSheet() {
     settingsGroup('Оформление', [theme, bg.node]),
     settingsGroup('Элементы', [order, autotags, retag.node]),
     settingsGroup('Данные', [backup.node, storageBlock()]),
+    settingsGroup('Помощь', [tour.node]),
     settingsGroup('Сброс', [reset.node]),
     h('p', { class: 'set-foot' }, 'Штучки. Всё хранится только на этом устройстве.')
   );
