@@ -1800,3 +1800,75 @@ p,
   padding-bottom: 24px;
   margin-bottom: -18px;
 }
+
+/* ---------- bottom install card ---------- */
+.promo{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end;justify-content:center;pointer-events:none}
+.promo__dim{position:absolute;inset:0;background:rgba(10,10,14,.42);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;transition:opacity .3s;pointer-events:auto}
+.promo.is-in .promo__dim{opacity:1}
+.promo__card{position:relative;width:calc(100% - 24px);max-width:440px;margin:0 12px calc(12px + env(safe-area-inset-bottom));padding:28px 20px 20px;border-radius:32px;background:var(--surface);color:var(--text);text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.28);transform:translateY(110%);transition:transform .42s cubic-bezier(.2,.9,.25,1);pointer-events:auto}
+.promo.is-in .promo__card{transform:none}
+.promo__x{position:absolute;top:14px;right:14px}
+.promo__art{position:relative;width:132px;height:112px;margin:0 auto 14px}
+.promo__stack{position:absolute;left:50%;top:14px;width:84px;height:84px;margin-left:-42px;border-radius:26px;background:var(--pill);transform:rotate(-9deg) translateX(-22px)}
+.promo__stack::after{content:"";position:absolute;inset:0;border-radius:26px;background:var(--pill);transform:rotate(18deg) translateX(44px);opacity:.7}
+.promo__icon{position:absolute;left:50%;top:6px;width:96px;height:96px;margin-left:-48px;border-radius:24px;box-shadow:0 10px 26px rgba(0,0,0,.25);object-fit:cover}
+.promo__icon.is-missing{visibility:hidden}
+.promo__title{margin:0 0 8px;font-size:22px;line-height:1.2;font-weight:800}
+.promo__text{margin:0 auto 20px;max-width:34ch;font-size:15px;line-height:1.4;color:var(--text-2)}
+.promo__actions{display:flex;gap:10px}
+.promo__actions .btn{flex:1;height:52px;border-radius:999px;font-weight:700;justify-content:center}
+.promo__later{background:transparent;border:1.5px solid var(--text-2);color:var(--text)}
+.promo__go{background:var(--ink);color:var(--ink-contrast);border:0}
+
+/* ---------- animated how-to ---------- */
+.demo{display:flex;flex-direction:column;gap:14px;margin-bottom:14px}
+.demo__phone{position:relative;width:190px;height:300px;margin:0 auto;border-radius:30px;border:6px solid var(--ink);background:var(--bg,var(--surface));overflow:hidden;flex:none}
+.demo__stage,.demo__scene{position:absolute;inset:0}
+.demo__scene{opacity:0;transition:opacity .45s;pointer-events:none;background:var(--surface);color:var(--text);font-size:11px}
+.demo__scene.is-active{opacity:1}
+.demo__page{padding:30px 12px 0}
+.demo__h{font-weight:800;font-size:18px;margin-bottom:10px}
+.demo__cards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.demo__cards span{height:64px;border-radius:12px;background:var(--pill)}
+.demo__toolbar{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-around;align-items:center;height:46px;border-top:1px solid var(--pill);background:var(--surface);font-size:18px}
+.demo__toolbar>span{position:relative;display:flex;align-items:center;justify-content:center;width:34px;height:34px}
+.demo__book,.demo__tabs{width:16px!important;height:16px!important;border:2px solid currentColor;border-radius:4px;opacity:.5}
+.demo__urlbar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;gap:6px;height:40px;padding:0 8px;background:var(--pill)}
+.demo__url{flex:1;padding:6px 10px;border-radius:999px;background:var(--surface);font-size:10px;color:var(--text-2)}
+.demo__dots{position:relative;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800}
+.demo__scene--android .demo__page,.demo__urlbar~.demo__page{padding-top:52px}
+.demo__dim{position:absolute;inset:0;background:rgba(0,0,0,.35)}
+.demo__dim.is-solid{background:rgba(0,0,0,.5)}
+.demo__sheet,.demo__menu{position:absolute;background:var(--surface);box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.demo__sheet{left:8px;right:8px;bottom:8px;border-radius:16px;overflow:hidden}
+.demo__menu{right:8px;top:40px;width:150px;border-radius:12px;overflow:hidden}
+.demo__row{position:relative;display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-bottom:1px solid var(--pill)}
+.demo__row:last-child{border:0}
+.demo__plus{font-size:16px;font-weight:700}
+.demo__dialog{position:absolute;left:10px;right:10px;top:50%;transform:translateY(-50%);border-radius:16px;background:var(--surface);overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.demo__dialog-head{display:flex;align-items:center;justify-content:space-between;padding:10px;border-bottom:1px solid var(--pill);font-size:10px}
+.demo__dialog-head .is-target{position:relative;font-weight:800;color:#2f6bff}
+.demo__dialog-body{display:flex;align-items:center;gap:10px;padding:14px 12px}
+.demo__dialog--android .demo__dialog-body{flex-direction:column;text-align:center}
+.demo__dialog-actions{display:flex;justify-content:flex-end;gap:18px;padding:6px 16px 14px;font-weight:700}
+.demo__dialog-actions .is-target{position:relative;color:#2f6bff}
+.demo__appicon{width:46px;height:46px;border-radius:12px;object-fit:cover;flex:none}
+.demo__appicon.is-missing{background:var(--ink)}
+.demo__field{flex:1;padding:8px 10px;border-radius:8px;background:var(--pill);font-size:12px}
+.demo__scene--home{background:linear-gradient(160deg,#c9d6ff,#e8d5ff)}
+.demo__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 6px;padding:34px 10px}
+.demo__cell{display:flex;flex-direction:column;align-items:center;gap:4px;height:50px}
+.demo__cell:not(.is-new){background:rgba(255,255,255,.55);border-radius:12px;width:40px;height:40px;margin:0 auto}
+.demo__cell em{font-style:normal;font-size:9px;color:#222}
+.demo__scene--home.is-active .demo__cell.is-new{animation:demoPop .7s .35s both cubic-bezier(.2,1.4,.4,1)}
+@keyframes demoPop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.demo__tap{position:absolute;left:50%;top:50%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:rgba(47,107,255,.35);border:2px solid #2f6bff;opacity:0;pointer-events:none}
+.demo__scene.is-active .demo__tap{animation:demoTap 1.4s .6s infinite}
+@keyframes demoTap{0%{opacity:0;transform:scale(1.8)}25%{opacity:1;transform:scale(1)}60%{opacity:1;transform:scale(.8)}100%{opacity:0;transform:scale(1.4)}}
+.demo__scene.is-active .is-target{animation:demoHi 1.4s .6s infinite}
+@keyframes demoHi{0%,100%{background:transparent}40%,60%{background:rgba(47,107,255,.14)}}
+.howto__step{opacity:.5;transition:opacity .3s}
+.howto__step.is-active{opacity:1}
+.howto__btn{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:none;border:0;padding:6px 0;color:inherit;font:inherit}
+.howto__step.is-active .howto__n{background:var(--ink);color:var(--ink-contrast)}
+@media (prefers-reduced-motion:reduce){.demo__tap,.demo__scene.is-active .is-target{animation:none}}

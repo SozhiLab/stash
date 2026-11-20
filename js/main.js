@@ -11,6 +11,7 @@ import { detectKind } from './lib/image.js';
 import { initBackground } from './services/background.js';
 import { applyTheme } from './services/theme.js';
 import { startTypography } from './lib/typo.js';
+import { startInstallPrompt } from './ui/InstallBanner.js';
 
 applyTheme();
 startTypography();
@@ -149,6 +150,7 @@ async function boot() {
   }
   window.addEventListener('hashchange', showRoute);
   showRoute();
+  startInstallPrompt();
   initBackground().catch((e) => console.warn('Background failed', e));
 }
 
