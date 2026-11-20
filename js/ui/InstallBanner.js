@@ -5,7 +5,6 @@ import { icon } from '../lib/icons.js';
 import { openSheet } from './BottomSheet.js';
 import { state } from '../store.js';
 import { tourDone } from './Tour.js';
-import { openBackupSheet } from './BackupSheet.js';
 
 const SNOOZE_KEY = 'stash:installSnooze';
 const POPUP_DONE_KEY = 'stash:installPopupDone';
@@ -232,7 +231,6 @@ export function openHowTo(initial) {
   let p = initial || platform();
   if (p === 'other') p = 'ios';
   let demo = null;
-  let noBackup = false;
   const content = h('div', { class: 'howto__content' });
   const seg = h('div', { class: 'seg', role: 'tablist' });
 
@@ -250,25 +248,6 @@ export function openHowTo(initial) {
       )
     );
     demo = HowToDemo(STEPS[p], p === 'ios' ? iosScenes() : androidScenes());
-    const backup = noBackup
-      ? h('p', { class: 'howto__ok' }, 'Отлично, переносить пока нечего. Просто добавьте значок по шагам выше, а резервную копию можно сделать позже в Настройках.')
-      : h(
-          'div',
-          { class: 'howto__backup' },
-          h(
-            'p',
-            { class: 'howto__note' },
-            p === 'ios'
-              ? 'Приложение на экране «Домой» хранит данные отдельно от браузера. Если элементы уже добавлены, сначала сохраните их в резервную копию.'
-              : 'Если в браузере уже есть элементы, на всякий случай сохраните их в резервную копию.'
-          ),
-          h(
-            'div',
-            { class: 'howto__btns' },
-            h('button', { class: 'btn howto__b', type: 'button', onClick: () => { close(); openBackupSheet(); } }, icon('download', 18), 'Сделать копию'),
-            h('button', { class: 'btn howto__b', type: 'button', onClick: () => { noBackup = true; render(); } }, 'Копии нет')
-          )
-        );
     const direct =
       installEvent && p === 'android'
         ? h(
@@ -286,7 +265,7 @@ export function openHowTo(initial) {
             'Установить сейчас'
           )
         : null;
-    content.replaceChildren(...[direct, demo.node, backup].filter(Boolean));
+    content.replaceChildren(...[direct, demo.node].filter(Boolean));
   };
 
   const layer = h(
