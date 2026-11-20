@@ -1912,7 +1912,6 @@ p,
 .tour__card.is-swap{animation:capIn .35s both}
 .tour__art{display:flex;justify-content:center;margin-bottom:10px}
 .tour__art img{width:72px;height:72px;border-radius:18px;box-shadow:0 8px 22px rgba(0,0,0,.22)}
-.tour__art svg{padding:10px;box-sizing:content-box;border-radius:50%;background:var(--pill)}
 .tour__count{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-2)}
 .tour__title{margin:4px 0 6px;font-size:20px;line-height:1.2;font-weight:800}
 .tour__text{margin:0 0 14px;font-size:15px;line-height:1.4;color:var(--text-2)}
@@ -1946,3 +1945,4 @@ p,
 @media (prefers-reduced-motion:reduce){.cdemo__tile.is-b,.cdemo__tap,.cdemo__toast,.cdemo__drop{animation:none}.cdemo__toast{opacity:1;transform:translate(-50%,0)}}
 .cdemo{height:158px;padding-top:54px}
 .cdemo__toast svg{display:block;flex:none}
+.cdemo__tile.is-b{width:72px;height:72px}.cdemo__drop{right:auto;left:calc(50% - 14px)}

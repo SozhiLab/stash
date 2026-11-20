@@ -51,7 +51,6 @@ const TOUR_STEPS = [
 ];
 
 function copyDemo() {
-  const tile = (cls) => h('span', { class: 'cdemo__tile ' + cls }, h('i'));
   return h(
     'div',
     { class: 'cdemo', 'aria-hidden': 'true' },
@@ -59,9 +58,7 @@ function copyDemo() {
     h(
       'div',
       { class: 'cdemo__row' },
-      tile('is-a'),
-      h('span', { class: 'cdemo__tile is-b' }, h('i'), h('span', { class: 'cdemo__tap' })),
-      tile('is-c')
+      h('span', { class: 'cdemo__tile is-b' }, h('i'), h('span', { class: 'cdemo__tap' }))
     ),
     h('div', { class: 'cdemo__paste' }, h('span', null, 'Ваш монтаж'), h('span', { class: 'cdemo__drop' }))
   );
