@@ -1877,3 +1877,26 @@ p,
 .seg__btn.is-active{background:var(--ink);color:var(--ink-contrast)}
 .demo__menu--ios{right:8px;bottom:54px;top:auto}
 .demo__row svg{flex:none}
+
+/* guide card (floating, partial height) */
+.promo__later{line-height:1.1;padding-top:0;padding-bottom:0}
+.promo--guide .promo__card{padding:22px 16px 16px;max-height:calc(100dvh - 90px);overflow-y:auto;text-align:left}
+.promo__title--sm{font-size:19px;margin:0 44px 12px 4px}
+.promo--guide .seg{margin-bottom:10px}
+.demo{flex-direction:row;align-items:center;gap:14px;margin-bottom:10px}
+.demo__frame{width:148px;height:234px;flex:none}
+.demo__frame .demo__phone{transform:scale(.78);transform-origin:0 0;margin:0}
+.demo__side{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.demo__count{font-size:12px;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.04em}
+.demo__cap{margin:0;font-size:16px;line-height:1.3;font-weight:600;min-height:84px}
+.demo__cap.is-swap{animation:capIn .35s both}
+@keyframes capIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.demo__dots-nav{display:flex;gap:6px}
+.demo__dot{width:8px;height:8px;padding:0;border:0;border-radius:99px;background:var(--pill);transition:width .25s,background .25s}
+.demo__dot.is-active{width:22px;background:var(--ink)}
+.howto__backup{display:flex;flex-direction:column;gap:10px}
+.howto__backup .howto__note{margin:0}
+.howto__btns{display:flex;gap:8px}
+.howto__b{flex:1;height:46px;border-radius:999px;justify-content:center;gap:6px;font-size:14px;line-height:1.1}
+.howto__ok{margin:0;padding:14px;border-radius:16px;background:var(--pill);font-size:14px;line-height:1.35}
+.howto__b{white-space:nowrap}

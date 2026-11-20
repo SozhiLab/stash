@@ -1,14 +1,14 @@
-// "Opened in a browser" prompts: a bottom card after 10 seconds, then a card at the top of Home.
+// "Opened in a browser" prompts: a bottom card once the person has used the app for a while, then a card at the top of Home.
 // Both lead to an animated step-by-step guide for adding the app to the Home Screen.
 import { h } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { openSheet } from './BottomSheet.js';
+import { state } from '../store.js';
 import { openBackupSheet } from './BackupSheet.js';
 
 const SNOOZE_KEY = 'stash:installSnooze';
 const POPUP_DONE_KEY = 'stash:installPopupDone';
 const SNOOZE_DAYS = 3;
-const POPUP_DELAY_MS = 10000;
 const STEP_MS = 2800;
 const APP_ICON = 'icons/icon-192.png';
 
@@ -182,27 +182,27 @@ function androidScenes() {
 
 function HowToDemo(steps, scenes) {
   const stage = h('div', { class: 'demo__stage' }, scenes);
-  const list = h(
-    'ol',
-    { class: 'howto__list' },
-    steps.map((t, i) =>
-      h(
-        'li',
-        { class: 'howto__step' },
-        h('button', { class: 'howto__btn', type: 'button', onClick: () => go(i) }, h('span', { class: 'howto__n' }, String(i + 1)), h('span', null, t))
-      )
-    )
+  const count = h('div', { class: 'demo__count' });
+  const cap = h('p', { class: 'demo__cap' });
+  const dots = h(
+    'div',
+    { class: 'demo__dots-nav' },
+    steps.map((t, i) => h('button', { class: 'demo__dot', type: 'button', 'aria-label': 'Шаг ' + (i + 1), onClick: () => go(i) }))
   );
-  const node = h('div', { class: 'demo' }, h('div', { class: 'demo__phone' }, stage), list);
+  const side = h('div', { class: 'demo__side' }, count, cap, dots);
+  const node = h('div', { class: 'demo' }, h('div', { class: 'demo__frame' }, h('div', { class: 'demo__phone' }, stage)), side);
   let index = 0;
   let timer = null;
 
   function go(i) {
     index = (i + steps.length) % steps.length;
     scenes.forEach((s, k) => s.classList.toggle('is-active', k === index));
-    scenes.forEach((s, k) => s.classList.toggle('is-past', k < index));
-    [...list.children].forEach((li, k) => li.classList.toggle('is-active', k === index));
-    stage.dataset.step = String(index);
+    [...dots.children].forEach((d, k) => d.classList.toggle('is-active', k === index));
+    count.textContent = `Шаг ${index + 1} из ${steps.length}`;
+    cap.textContent = steps[index];
+    cap.classList.remove('is-swap');
+    void cap.offsetWidth;
+    cap.classList.add('is-swap');
     clearInterval(timer);
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!reduce) timer = setInterval(() => go(index + 1), STEP_MS);
@@ -211,12 +211,36 @@ function HowToDemo(steps, scenes) {
   return { node, stop: () => clearInterval(timer), go };
 }
 
+const STEPS = {
+  ios: [
+    'Нажмите три точки «•••» в нижней панели Safari.',
+    'Выберите «Поделиться».',
+    'Выберите «На экран „Домой“».',
+    'Нажмите «Добавить» в правом верхнем углу.',
+    'Открывайте Штучки с нового значка на экране.',
+  ],
+  android: [
+    'Откройте меню браузера (три точки).',
+    'Выберите «Установить приложение».',
+    'Подтвердите установку.',
+    'Открывайте Штучки с нового значка на экране.',
+  ],
+};
+
 export function openHowTo(initial) {
   let p = initial || platform();
   if (p === 'other') p = 'ios';
   let demo = null;
+  let noBackup = false;
   const content = h('div', { class: 'howto__content' });
   const seg = h('div', { class: 'seg', role: 'tablist' });
+
+  const close = () => {
+    if (demo) demo.stop();
+    layer.classList.remove('is-in');
+    setTimeout(() => layer.remove(), 320);
+  };
+
   const render = () => {
     if (demo) demo.stop();
     seg.replaceChildren(
@@ -224,76 +248,63 @@ export function openHowTo(initial) {
         h('button', { class: 'seg__btn' + (k === p ? ' is-active' : ''), type: 'button', role: 'tab', onClick: () => { p = k; render(); } }, label)
       )
     );
-    content.replaceChildren(buildHowTo(p));
-  };
-  const buildHowTo = (p) => {
-  const steps =
-    p === 'ios'
-      ? [
-          'Нажмите три точки «•••» в нижней панели Safari.',
-          'Выберите «Поделиться».',
-          'Выберите «На экран «Домой»».',
-          'Нажмите «Добавить» в правом верхнем углу.',
-          'Открывайте Штучки с нового значка на экране.',
-        ]
-      : [
-          'Откройте меню браузера (три точки).',
-          'Выберите «Установить приложение».',
-          'Подтвердите установку.',
-          'Открывайте Штучки с нового значка на экране.',
-        ];
-  demo = HowToDemo(steps, p === 'ios' ? iosScenes() : androidScenes());
-  return h(
-    'div',
-    null,
-    installEvent && p === 'android'
-      ? h(
-          'button',
-          {
-            class: 'btn btn--primary btn--block',
-            type: 'button',
-            onClick: async () => {
-              installEvent.prompt();
-              try {
-                await installEvent.userChoice;
-              } catch (e) {
-                /* dismissed */
-              }
-              installEvent = null;
-              sheet.close();
+    demo = HowToDemo(STEPS[p], p === 'ios' ? iosScenes() : androidScenes());
+    const backup = noBackup
+      ? h('p', { class: 'howto__ok' }, 'Отлично, переносить пока нечего. Просто добавьте значок по шагам выше, а резервную копию можно сделать позже в Настройках.')
+      : h(
+          'div',
+          { class: 'howto__backup' },
+          h(
+            'p',
+            { class: 'howto__note' },
+            p === 'ios'
+              ? 'Приложение на экране «Домой» хранит данные отдельно от браузера. Если элементы уже добавлены, сначала сохраните их в резервную копию.'
+              : 'Если в браузере уже есть элементы, на всякий случай сохраните их в резервную копию.'
+          ),
+          h(
+            'div',
+            { class: 'howto__btns' },
+            h('button', { class: 'btn howto__b', type: 'button', onClick: () => { close(); openBackupSheet(); } }, icon('download', 18), 'Сделать копию'),
+            h('button', { class: 'btn howto__b', type: 'button', onClick: () => { noBackup = true; render(); } }, 'Копии нет')
+          )
+        );
+    const direct =
+      installEvent && p === 'android'
+        ? h(
+            'button',
+            {
+              class: 'btn btn--primary btn--block',
+              type: 'button',
+              onClick: async () => {
+                installEvent.prompt();
+                try { await installEvent.userChoice; } catch (e) { /* dismissed */ }
+                installEvent = null;
+                close();
+              },
             },
-          },
-          'Установить сейчас'
-        )
-      : null,
-    demo.node,
+            'Установить сейчас'
+          )
+        : null;
+    content.replaceChildren(...[direct, demo.node, backup].filter(Boolean));
+  };
+
+  const layer = h(
+    'div',
+    { class: 'promo promo--guide', role: 'dialog', 'aria-label': 'Как добавить на экран «Домой»' },
+    h('div', { class: 'promo__dim', onClick: close }),
     h(
       'div',
-      { class: 'howto__note' },
-      h('strong', null, 'Важно про уже добавленные элементы. '),
-      p === 'ios'
-        ? 'Приложение с экрана «Домой» на iPhone хранит данные отдельно от браузера, поэтому сначала сделайте резервную копию здесь, а потом восстановите её в новом приложении (Настройки → Резервная копия).'
-        : 'Если в браузере уже есть элементы, на всякий случай сделайте резервную копию (Настройки → Резервная копия). Её можно восстановить в любом месте.'
-    ),
-    h(
-      'button',
-      {
-        class: 'btn btn--block',
-        type: 'button',
-        onClick: () => {
-          sheet.close();
-          openBackupSheet();
-        },
-      },
-      icon('download', 18),
-      'Сделать резервную копию'
+      { class: 'promo__card' },
+      h('button', { class: 'promo__x icon-btn icon-btn--sm', type: 'button', 'aria-label': 'Закрыть', onClick: close }, icon('close', 18)),
+      h('h2', { class: 'promo__title promo__title--sm' }, 'Добавить на экран «Домой»'),
+      seg,
+      content
     )
   );
-  };
-  const body = h('div', { class: 'howto' }, seg, content);
   render();
-  const sheet = openSheet({ title: 'Добавить на экран «Домой»', body, size: 'md', onClose: () => demo && demo.stop() });
-  return sheet;
+  document.body.append(layer);
+  requestAnimationFrame(() => requestAnimationFrame(() => layer.classList.add('is-in')));
+  return { close };
 }
 
 // ---------- bottom card, shown once after 10 seconds ----------
@@ -334,15 +345,29 @@ function showPopup() {
   requestAnimationFrame(() => requestAnimationFrame(() => layer.classList.add('is-in')));
 }
 
+// Wait until the person has actually used the app: some time spent and something added.
+const VISITS_KEY = 'stash:visits';
+const ACTIVE_KEY = 'stash:activeSec';
+const ready = () => {
+  const visits = Number(readKey(VISITS_KEY) || 0);
+  const active = Number(readKey(ACTIVE_KEY) || 0);
+  const has = state.elements.length > 0;
+  return (has && (active >= 120 || visits >= 2)) || (visits >= 3 && active >= 60);
+};
+
 export function startInstallPrompt() {
   if (!canPrompt() || popupDone()) return;
-  const tryShow = () => {
+  writeKey(VISITS_KEY, String(Number(readKey(VISITS_KEY) || 0) + 1));
+  setInterval(() => {
+    if (!document.hidden) writeKey(ACTIVE_KEY, String(Number(readKey(ACTIVE_KEY) || 0) + 5));
+  }, 5000);
+  const tick = setInterval(() => {
+    if (document.hidden || popupDone() || !ready()) return;
     const root = document.getElementById('overlay-root');
-    const busy = (root && root.childElementCount > 0) || document.querySelector('.promo');
-    if (busy || document.hidden) return setTimeout(tryShow, 4000);
+    if ((root && root.childElementCount > 0) || document.querySelector('.promo')) return;
+    clearInterval(tick);
     showPopup();
-  };
-  setTimeout(tryShow, POPUP_DELAY_MS);
+  }, 5000);
 }
 
 // ---------- top card on Home (after the bottom card was closed) ----------
