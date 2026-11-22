@@ -96,7 +96,7 @@ export function openBackupSheet() {
           'Скачать'
         )
       ),
-      h('p', { class: 'backup__note' }, 'В меню выберите «Сохранить в Файлы» или отправьте файл себе в Telegram.')
+      h('p', { class: 'backup__note' }, 'В меню выберите «Сохранить в Файлы» и в окне выбора места нажмите «На iPhone», а не iCloud Drive. Или отправьте файл себе в Telegram.')
     );
     ready.hidden = false;
   }

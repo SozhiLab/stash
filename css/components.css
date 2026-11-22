@@ -598,6 +598,7 @@
   width: 100%;
   max-width: 560px;
   max-height: min(90vh, 860px);
+  max-height: min(calc(100dvh - 24px - env(safe-area-inset-top, 0px)), 860px);
   display: flex;
   flex-direction: column;
   background: var(--sheet);
@@ -1952,3 +1953,5 @@ p,
 @keyframes cdTapApp{0%,64%{opacity:0;transform:scale(1.8)}68%{opacity:1;transform:scale(1)}72%{opacity:1;transform:scale(.8)}77%,100%{opacity:0;transform:scale(1.3)}}
 @keyframes cdPlaced{0%,74%{opacity:0;transform:scale(.3)}80%{opacity:1;transform:scale(1.15)}84%,100%{opacity:1;transform:scale(1)}}
 @media (prefers-reduced-motion:reduce){.cdemo *{animation:none!important}.cdemo__toast{opacity:1;transform:translate(-50%,0)}}
+
+.tour__text{white-space:pre-line}

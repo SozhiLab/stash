@@ -10,7 +10,7 @@ import { plural, formatSize, EL_FORMS } from '../lib/format.js';
 export function openFolderExport(folder) {
   const status = h('p', { class: 'backup__text' }, 'Упаковываю папку…');
   const actions = h('div', { class: 'sheet__actions', hidden: true });
-  const note = h('p', { class: 'backup__note', hidden: true }, 'Получатель открывает Штучки → «Новая папка» → «Импортировать папку» и выбирает этот файл.');
+  const note = h('p', { class: 'backup__note', hidden: true }, 'Получатель открывает Штучки → «Новая папка» → «Импортировать папку» и выбирает этот файл. Если сохраняете в Файлы, выберите место «На iPhone», а не iCloud Drive.');
   const body = h('div', { class: 'backup' }, status, actions, note);
   openSheet({ title: `Отправить «${folder.name}»`, body, size: 'sm' });
 
