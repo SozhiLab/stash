@@ -209,6 +209,7 @@ export async function importFolders(list, { top = false } = {}) {
     await repository.saveFolder(folder);
     state.folders.push(folder);
   }
+  state.folders.sort(byOrder);
   notify();
   return fresh.length;
 }
