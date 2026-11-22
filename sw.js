@@ -1,5 +1,5 @@
 // Offline shell cache. Bump VERSION when files change.
-const VERSION = 'stash-v44';
+const VERSION = 'stash-v45';
 const SHELL = [
   './',
   'index.html',

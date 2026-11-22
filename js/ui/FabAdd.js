@@ -2,6 +2,8 @@
 import { h } from '../lib/dom.js';
 import { icon } from '../lib/icons.js';
 import { openUpload, ACCEPT } from './UploadModal.js';
+import { openMenu } from './BottomSheet.js';
+import { importFolderFromFile } from './FolderTransfer.js';
 
 export function FabAdd({ folderId = null } = {}) {
   const input = h('input', { type: 'file', multiple: true, accept: ACCEPT, hidden: true, id: 'fab-input' });
@@ -10,9 +12,17 @@ export function FabAdd({ folderId = null } = {}) {
     input.value = '';
     if (files.length) openUpload({ files, folderId });
   });
-  const button = h(
+  let button = null;
+  button = h(
     'button',
-    { class: 'fab fab--round', type: 'button', 'aria-label': 'Добавить элементы', onClick: () => input.click() },
+    { class: 'fab fab--round', type: 'button', 'aria-label': 'Добавить элементы', onClick: () => openMenu(
+        [
+          { label: 'Добавить элементы', icon: 'plus', run: () => input.click() },
+          { label: 'Импортировать папку', icon: 'upload', run: () => importFolderFromFile() },
+        ],
+        { anchor: button }
+      ),
+    },
     icon('plus', 28)
   );
   return h('div', { class: 'fab-host' }, input, button);

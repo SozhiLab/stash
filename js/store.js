@@ -187,11 +187,16 @@ export async function removeUntouchedStarterFolders() {
 }
 
 // Returns how many folders were created (existing ids are kept untouched)
-export async function importFolders(list) {
-  const base = state.folders.length ? Math.max(...state.folders.map((f) => f.order)) + 1 : 0;
+// top: new folders go before all existing ones (used for imported packs)
+export async function importFolders(list, { top = false } = {}) {
   const fresh = list
     .filter((f) => f && f.id && !getFolder(f.id))
     .sort((a, b) => (a.order || 0) - (b.order || 0));
+  const base = top
+    ? (state.folders.length ? Math.min(...state.folders.map((f) => f.order)) : 0) - fresh.length
+    : state.folders.length
+      ? Math.max(...state.folders.map((f) => f.order)) + 1
+      : 0;
   for (const [i, f] of fresh.entries()) {
     const folder = {
       id: String(f.id),

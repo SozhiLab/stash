@@ -54,7 +54,7 @@ export function openFolderEditor({ folder, onCreated } = {}) {
 
   const swatchNodes = HUES.map((hv) => {
     const btn = h('button', {
-      class: 'swatch',
+      class: 'huedot',
       type: 'button',
       style: `--hue:${hv}`,
       'aria-label': `Цвет ${hv}`,

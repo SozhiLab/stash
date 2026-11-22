@@ -16,7 +16,12 @@ const TOUR_STEPS = [
   {
     target: '.folder--new',
     title: 'Раскладывайте по папкам',
-    text: 'Создавайте папки под свои темы или проекты: по клиентам, рубрикам, сериям постов. Своя структура помогает находить нужное сразу.\nПапками можно обмениваться: в меню папки выберите «Отправить папку», и коллега или клиент получит её файлом.',
+    text: 'Создавайте папки под свои темы или проекты: по клиентам, рубрикам, сериям постов. Своя структура помогает находить нужное сразу.',
+  },
+  {
+    title: 'Обменивайтесь папками',
+    text: 'В меню папки выберите «Отправить папку»: она упакуется в один файл вместе с элементами. Коллега или клиент добавит её через «+» → «Импортировать папку».',
+    icon: 'share',
   },
   {
     target: '.fab',
@@ -145,9 +150,9 @@ export function startTour() {
     count.textContent = `${i + 1} из ${TOUR_STEPS.length}`;
     [...dots.children].forEach((d, k) => d.classList.toggle('is-active', k === i));
     art.replaceChildren(
-      step.hero ? h('img', { src: APP_ICON_URL, alt: '', draggable: 'false' }) : step.demo ? copyDemo() : ''
+      step.hero ? h('img', { src: APP_ICON_URL, alt: '', draggable: 'false' }) : step.demo ? copyDemo() : step.icon ? h('span', { class: 'tour__badge' }, icon(step.icon, 28)) : ''
     );
-    art.hidden = !step.hero && !step.demo;
+    art.hidden = !step.hero && !step.demo && !step.icon;
     later.textContent = step.last ? 'Позже' : 'Пропустить';
     next.textContent = step.last ? 'Добавить' : i === 0 ? 'Начать' : 'Далее';
     requestAnimationFrame(place);

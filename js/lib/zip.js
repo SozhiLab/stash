@@ -121,10 +121,11 @@ export async function zipRead(file) {
     const lh = new DataView(await file.slice(e.offset, e.offset + 30).arrayBuffer());
     const start = e.offset + 30 + lh.getUint16(26, true) + lh.getUint16(28, true);
     const raw = file.slice(start, start + e.csize);
-    if (e.method === 0) return new Blob([raw], { type: mime || '' });
+    // Copy into memory: a Blob that still points into the picked file can become unreadable later (iOS).
+    if (e.method === 0) return new Blob([await raw.arrayBuffer()], { type: mime || '' });
     if (e.method === 8 && typeof DecompressionStream !== 'undefined') {
       const out = await new Response(raw.stream().pipeThrough(new DecompressionStream('deflate-raw'))).blob();
-      return new Blob([out], { type: mime || '' });
+      return new Blob([await out.arrayBuffer()], { type: mime || '' });
     }
     throw new Error('Неподдерживаемый способ сжатия в архиве');
   }

@@ -108,7 +108,7 @@ export async function restoreBackup(file, onProgress) {
   // the built-in starter folders would only get in the way of the restored ones
   const isPack = meta.kind === 'folder';
   if (meta.folders.length && !isPack) await removeUntouchedStarterFolders();
-  const result = { folders: await importFolders(meta.folders), added: 0, skipped: 0, failed: 0, pack: isPack, names: meta.folders.map((f) => f.name) };
+  const result = { folders: await importFolders(meta.folders, { top: isPack }), added: 0, skipped: 0, failed: 0, pack: isPack, names: meta.folders.map((f) => f.name) };
   let done = 0;
   for (const m of meta.elements) {
     try {
