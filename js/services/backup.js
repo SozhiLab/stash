@@ -32,8 +32,13 @@ export function backupFileName(d = new Date()) {
   return `shtuchki-backup-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.zip`;
 }
 
-export async function createBackup(onProgress) {
-  const folders = [...state.folders].sort((a, b) => a.order - b.order);
+export function folderFileName(name) {
+  return `shtuchki-${cleanName(name, 'papka').replace(/\s+/g, '-').toLowerCase()}.zip`;
+}
+
+// folderId: export just that folder (a shareable pack) instead of the whole library
+export async function createBackup(onProgress, { folderId } = {}) {
+  const folders = [...state.folders].filter((f) => !folderId || f.id === folderId).sort((a, b) => a.order - b.order);
   const dirs = new Map();
   const usedDirs = new Set();
   folders.forEach((f) => dirs.set(f.id, uniqueName(usedDirs, cleanName(f.name, 'Папка'))));
@@ -41,7 +46,7 @@ export async function createBackup(onProgress) {
 
   const files = [];
   const elements = [];
-  for (const el of state.elements) {
+  for (const el of state.elements.filter((e) => !folderId || e.folderId === folderId)) {
     const dir = dirs.get(el.folderId);
     const blob = dir ? await getBlob(el.id) : null;
     if (!blob) continue;
@@ -64,7 +69,7 @@ export async function createBackup(onProgress) {
 
   const settings = {};
   const bg = getBackgroundState();
-  if (bg.blob) {
+  if (bg.blob && !folderId) {
     files.push({ name: BACKUP_BG, data: bg.blob });
     settings.background = BACKUP_BG;
     settings.backgroundVisibility = bg.visibility;
@@ -73,6 +78,7 @@ export async function createBackup(onProgress) {
   const meta = {
     app: BACKUP_APP,
     version: 1,
+    kind: folderId ? 'folder' : 'library',
     createdAt: Date.now(),
     folders: folders.map((f) => ({ id: f.id, name: f.name, emoji: f.emoji, hue: f.hue, order: f.order, createdAt: f.createdAt })),
     elements,
@@ -100,8 +106,9 @@ export async function restoreBackup(file, onProgress) {
   }
 
   // the built-in starter folders would only get in the way of the restored ones
-  if (meta.folders.length) await removeUntouchedStarterFolders();
-  const result = { folders: await importFolders(meta.folders), added: 0, skipped: 0, failed: 0 };
+  const isPack = meta.kind === 'folder';
+  if (meta.folders.length && !isPack) await removeUntouchedStarterFolders();
+  const result = { folders: await importFolders(meta.folders), added: 0, skipped: 0, failed: 0, pack: isPack, names: meta.folders.map((f) => f.name) };
   let done = 0;
   for (const m of meta.elements) {
     try {
@@ -117,7 +124,7 @@ export async function restoreBackup(file, onProgress) {
     if (onProgress) onProgress(done, meta.elements.length);
   }
 
-  if (meta.settings && meta.settings.background && !getBackgroundState().blob) {
+  if (!isPack && meta.settings && meta.settings.background && !getBackgroundState().blob) {
     try {
       const bg = await zip.blob(meta.settings.background, 'image/jpeg');
       if (bg) await restoreBackgroundBlob(bg, meta.settings.backgroundVisibility);

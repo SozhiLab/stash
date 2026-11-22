@@ -1,6 +1,8 @@
 import { h } from '../lib/dom.js';
 import { openSheet } from './BottomSheet.js';
 import { toast } from './Toast.js';
+import { icon } from '../lib/icons.js';
+import { importFolderFromFile } from './FolderTransfer.js';
 import { state, createFolder, updateFolder } from '../store.js';
 import { HUES } from '../data/defaults.js';
 import { firstGrapheme } from '../lib/format.js';
@@ -93,7 +95,15 @@ export function openFolderEditor({ folder, onCreated } = {}) {
       h('div', { class: 'emoji-line' }, emojiInput, picks)
     ),
     h('div', { class: 'field' }, h('span', { class: 'field__label' }, 'Цвет'), h('div', { class: 'swatches' }, swatchNodes)),
-    h('button', { class: 'btn btn--primary btn--block', type: 'submit' }, folder ? 'Сохранить' : 'Создать папку')
+    h('button', { class: 'btn btn--primary btn--block', type: 'submit' }, folder ? 'Сохранить' : 'Создать папку'),
+    folder
+      ? null
+      : h(
+          'button',
+          { class: 'btn btn--block', type: 'button', onClick: () => importFolderFromFile(() => sheet.close()) },
+          icon('upload', 18),
+          'Импортировать папку из файла'
+        )
   );
   const sheet = openSheet({ title: folder ? 'Изменить папку' : 'Новая папка', body: form, size: 'sm' });
   nameInput.focus();

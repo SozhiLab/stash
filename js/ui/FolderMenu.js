@@ -2,6 +2,7 @@ import { openMenu, confirmSheet } from './BottomSheet.js';
 import { openFolderEditor } from './FolderEditor.js';
 import { openUpload } from './UploadModal.js';
 import { toast } from './Toast.js';
+import { openFolderExport } from './FolderTransfer.js';
 import { state, elementsIn, removeFolder, moveFolder } from '../store.js';
 import { plural, EL_FORMS } from '../lib/format.js';
 
@@ -24,6 +25,7 @@ export function openFolderMenu(folder, anchor, { inView = false } = {}) {
   const idx = state.folders.indexOf(folder);
   const items = [
     inView && { label: 'Добавить элементы', icon: 'plus', run: () => openUpload({ folderId: folder.id }) },
+    { label: 'Отправить папку', icon: 'share', run: () => openFolderExport(folder) },
     { label: 'Изменить папку', icon: 'edit', run: () => openFolderEditor({ folder }) },
     !inView && idx > 0 && { label: 'Сдвинуть раньше', icon: 'arrowLeft', run: () => moveFolder(folder.id, -1) },
     !inView &&
